@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { FaXTwitter } from 'react-icons/fa6';
+import { FaXTwitter, FaGithub } from 'react-icons/fa6';
 import { FaSearch } from 'react-icons/fa';
 
 function Header() {
@@ -17,19 +17,23 @@ function Header() {
         />
         <h1 className=" ml-2 font-bold text-xl ">Wavepatterns</h1>
       </div>
-      <div className=" w-full lg:w-2/3 flex flex-row lg:justify-center items-center mt-3 ">
-        <div className=" w-2/4 text-black flex px-2 bg-white items-center border rounded-lg overflow-hidden">
-          <FaSearch className="text-gray-400" />
+      <div className=" w-full lg:w-2/3 flex flex-col lg:flex-row lg:justify-center lg:items-center mt-3  ">
+        <div className=" lg:w-2/4 text-white flex px-2 items-center border rounded-lg overflow-hidden bg-gray-200  bg-gradient-to-b from-zinc-200  border-neutral-800  dark:from-inherit   dark:bg-zinc-800/30 ">
+          <FaSearch className="text-white" />
           <input
             type="text"
             id="username"
             name="username"
             placeholder="Paste any wallet address or ENS here"
-            className="py-2 px-4 flex-1 outline-none"
+            className="py-2 px-4 flex-1 outline-none bg-gray-200  bg-gradient-to-b from-zinc-200 dark:from-inherit  dark:bg-zinc-800/5 "
           />
         </div>
-        <div className=" ml-3 flex flex-row items-center ">
-          <FaXTwitter size={30} />
+        <div className=" mt-3 lg:mt-0 ml-3 flex flex-row items-center ">
+          <FaGithub size={30} />
+          <FaXTwitter
+            size={30}
+            className=" ml-2 "
+          />
           <h1 className=" ml-2 ">Follow us</h1>
         </div>
       </div>
