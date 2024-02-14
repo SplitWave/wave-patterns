@@ -25,7 +25,7 @@ function Header() {
             id="address"
             name="address"
             placeholder="Paste any wallet address or .sol address here."
-            className="py-2 px-4 flex-1 outline-none"
+            className="py-2 px-4 flex-1 outline-none bg-gradient-to-b from-zinc-200  border-neutral-800  dark:from-inherit   dark:bg-zinc-800/5 "
           />
         </div>
         <div className=" mt-3 lg:mt-0 ml-3 flex flex-row items-center ">

@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
+import { request } from 'graphql-request';
 
 interface TokenInfo {
   name: string;
@@ -139,6 +140,84 @@ export const getStakeAccounts = async (
     return response.data;
   } catch (error) {
     console.error('Error fetching stake accounts:', error);
+    throw error;
+  }
+};
+
+export const getBorrowingUserMetadata = async (publicKey: string) => {
+  const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+  if (!apiKey) {
+    throw new Error('API key not found in environment variables.');
+  }
+  const endpoint = `https://programs.shyft.to/v0/graphql/?api_key=${apiKey}`;
+  const query = `
+        query MyQuery {
+            borrowing_UserMetadata(
+                where: { owner: { _eq: ${publicKey} }}
+            ) {
+                _lamports
+                borrowedStablecoin
+                borrowingMarketState
+                depositedCollateral
+                inactiveCollateral
+                marketType
+                metadataPk
+                status
+                userCollateralRewardPerToken
+                userId
+                userStablecoinRewardPerToken
+                userStake
+                version
+                owner
+            }
+        }
+    `;
+
+  try {
+    const data: any = await request(endpoint, query);
+
+    return data.borrowing_UserMetadata;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw new Error('Error fetching data');
+  }
+};
+
+export const getLendingObligation = async (publicKey: string) => {
+  try {
+    const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+    if (!apiKey) {
+      throw new Error('API key not found in environment variables.');
+    }
+
+    const endpoint = `https://programs.shyft.to/v0/graphql/?api_key=${apiKey}`;
+    const query = `
+      query MyQuery {
+        kamino_lending_Obligation(
+          where: { owner: { _eq: ${publicKey} } }
+        ) {
+          _lamports
+          allowedBorrowValueSf
+          borrowFactorAdjustedDebtValueSf
+          borrowedAssetsMarketValueSf
+          depositedValueSf
+          elevationGroup
+          lastUpdate
+          lendingMarket
+          lowestReserveDepositLtv
+          numOfObsoleteReserves
+          owner
+          referrer
+          tag
+          unhealthyBorrowValueSf
+        }
+      }
+    `;
+
+    const data: any = await request(endpoint, query);
+    return data.kamino_lending_Obligation;
+  } catch (error) {
+    console.error('Error fetching lending obligation:', error);
     throw error;
   }
 };

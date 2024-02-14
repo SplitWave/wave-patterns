@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tab } from '@headlessui/react';
 import { classNames } from './Dashboard';
+import {
+  getBorrowingUserMetadata,
+  getLendingObligation,
+} from '@/utils/helpers';
 
 function Home() {
   let [categories] = useState({
@@ -8,6 +12,34 @@ function Home() {
     Analytics: [],
     Notifications: [],
   });
+  const [lendingObligations, setLendingObligations] = useState<any>([]);
+
+  const fetchLendingObligations = async () => {
+    try {
+      const ownerPublicKey = 'B4P4miyudoJTSpiuchDJs4HvxhSvyStni49LtEVoYVM'; // Replace with your owner's public key
+      const obligations = await getLendingObligation(ownerPublicKey);
+      console.log(' Lending obligations:', obligations);
+      //setLendingObligations(obligations);
+    } catch (error) {
+      console.error('Error fetching lending obligations:', error);
+    }
+  };
+
+  async function fetchBorrowingUserMetadata() {
+    const publicKey = 'B4P4miyudoJTSpiuchDJs4HvxhSvyStni49LtEVoYVM'; // Example publicKey
+    try {
+      const metadata = await getBorrowingUserMetadata(publicKey);
+      console.log('Borrowing User Metadata:', metadata);
+    } catch (error) {
+      console.error('Error fetching borrowing user metadata:', error);
+    }
+  }
+
+  useEffect(() => {
+    fetchBorrowingUserMetadata();
+    fetchLendingObligations();
+  }, []);
+
   return (
     <div className=" w-full h-full lg:p-10 ">
       <Tab.Group>
