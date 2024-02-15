@@ -90,6 +90,25 @@ interface StakeAccountsResponse {
   };
 }
 
+interface KaminoPoints {
+  leaderboardRank: number;
+  totalPointsEarned: number;
+  avgBoost: number;
+}
+
+export const getKaminoPoints = async (
+  walletAddress: string
+): Promise<KaminoPoints> => {
+  try {
+    const url = `https://api.hubbleprotocol.io/points/users/${walletAddress}/breakdown?env=mainnet-beta`;
+    const response: AxiosResponse<KaminoPoints> = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching kamino points:', error);
+    throw error;
+  }
+}
+
 export const fetchAllTokensBalance = async (
   walletAddress: string
 ): Promise<AllTokensBalanceResponse[]> => {

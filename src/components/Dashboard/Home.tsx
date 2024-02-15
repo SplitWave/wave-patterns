@@ -14,6 +14,7 @@ function Home() {
   });
   const [lendingObligations, setLendingObligations] = useState<any>([]);
 
+
   const fetchLendingObligations = async () => {
     try {
       const ownerPublicKey = 'B4P4miyudoJTSpiuchDJs4HvxhSvyStni49LtEVoYVM'; // Replace with your owner's public key
@@ -38,6 +39,7 @@ function Home() {
   useEffect(() => {
     fetchBorrowingUserMetadata();
     fetchLendingObligations();
+ 
   }, []);
 
   return (
