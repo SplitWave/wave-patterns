@@ -14,7 +14,7 @@ interface TokenBalance {
   info: TokenInfo;
 }
 
-interface AllTokensBalanceResponse {
+export interface AllTokensBalanceResponse {
   success: boolean;
   message: string;
   result: TokenBalance[];
@@ -107,7 +107,7 @@ export const getKaminoPoints = async (
     console.error('Error fetching kamino points:', error);
     throw error;
   }
-}
+};
 
 export const fetchAllTokensBalance = async (
   walletAddress: string
@@ -163,80 +163,112 @@ export const getStakeAccounts = async (
   }
 };
 
-export const getBorrowingUserMetadata = async (publicKey: string) => {
+export const getFarmsUserState = async (publicKey: string) => {
   const apiKey = process.env.NEXT_PUBLIC_API_KEY;
   if (!apiKey) {
     throw new Error('API key not found in environment variables.');
   }
   const endpoint = `https://programs.shyft.to/v0/graphql/?api_key=${apiKey}`;
   const query = `
-        query MyQuery {
-            borrowing_UserMetadata(
-                where: { owner: { _eq: ${publicKey} }}
-            ) {
-                _lamports
-                borrowedStablecoin
-                borrowingMarketState
-                depositedCollateral
-                inactiveCollateral
-                marketType
-                metadataPk
-                status
-                userCollateralRewardPerToken
-                userId
-                userStablecoinRewardPerToken
-                userStake
-                version
-                owner
-            }
-        }
+  query MyQuery {
+    farms_UserState(
+      where: {owner: {_eq: "${publicKey}"}}
+    ) {
+      _lamports
+      activeStakeScaled
+      bump
+      delegatee
+      farmState
+      lastStakeTs
+      legacyStake
+      owner
+      pendingDepositStakeScaled
+      pendingDepositStakeTs
+      pendingWithdrawalUnstakeScaled
+      pendingWithdrawalUnstakeTs
+      userId
+      FarmState {
+        _lamports
+        delegateAuthority
+        depositCapAmount
+        depositWarmupPeriod
+        farmAdmin
+        farmVault
+        farmVaultsAuthority
+        farmVaultsAuthorityBump
+        globalConfig
+        lockingDuration
+        lockingEarlyWithdrawalPenaltyBps
+        lockingMode
+        lockingStartTimestamp
+        numRewardTokens
+        numUsers
+        pendingFarmAdmin
+        scopeOracleMaxAge
+        scopeOraclePriceId
+        scopePrices
+        slashedAmountCumulative
+        slashedAmountCurrent
+        slashedAmountSpillAddress
+        strategyId
+        timeUnit
+        token
+        totalActiveStakeScaled
+        totalPendingAmount
+        totalPendingStakeScaled
+        totalStakedAmount
+        withdrawAuthority
+        withdrawalCooldownPeriod
+      }
+    }
+  }
     `;
 
   try {
     const data: any = await request(endpoint, query);
 
-    return data.borrowing_UserMetadata;
+    return data.farms_UserState;
   } catch (error) {
     console.error('Error fetching data:', error);
     throw new Error('Error fetching data');
   }
 };
 
-export const getLendingObligation = async (publicKey: string) => {
-  try {
-    const apiKey = process.env.NEXT_PUBLIC_API_KEY;
-    if (!apiKey) {
-      throw new Error('API key not found in environment variables.');
-    }
+// export const getLendingObligation = async (publicKey: string) => {
+//   try {
+//     const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+//     if (!apiKey) {
+//       throw new Error('API key not found in environment variables.');
+//     }
 
-    const endpoint = `https://programs.shyft.to/v0/graphql/?api_key=${apiKey}`;
-    const query = `
-      query MyQuery {
-        kamino_lending_Obligation(
-          where: { owner: { _eq: ${publicKey} } }
-        ) {
-          _lamports
-          allowedBorrowValueSf
-          borrowFactorAdjustedDebtValueSf
-          borrowedAssetsMarketValueSf
-          depositedValueSf
-          elevationGroup
-          lastUpdate
-          lendingMarket
-          lowestReserveDepositLtv
-          numOfObsoleteReserves
-          owner
-          referrer
-          tag
-          unhealthyBorrowValueSf
-        }
-      }
-    `;
+//     const endpoint = `https://programs.shyft.to/v0/graphql/?api_key=${apiKey}`;
+//     const query = `
+//       query MyQuery {
+//         kamino_lending_Obligation(
+//           where: { owner: { _eq: ${publicKey} } }
+//         ) {
+//           _lamports
+//           allowedBorrowValueSf
+//           borrowFactorAdjustedDebtValueSf
+//           borrowedAssetsMarketValueSf
+//           depositedValueSf
+//           elevationGroup
+//           lastUpdate
+//           lendingMarket
+//           lowestReserveDepositLtv
+//           numOfObsoleteReserves
+//           owner
+//           referrer
+//           tag
+//           unhealthyBorrowValueSf
+//         }
+//       }
+//     `;
 
-    const data: any = await request(endpoint, query);
-    return data.kamino_lending_Obligation;
-  } catch (error) {
-    console.error('Error fetching lending obligation:', error);
-    throw error;
-  }
-};
+//     const data: any = await request(endpoint, query);
+//     return data.kamino_lending_Obligation;
+//   } catch (error) {
+//     console.error('Error fetching lending obligation:', error);
+//     throw error;
+//   }
+// };
