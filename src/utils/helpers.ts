@@ -96,6 +96,16 @@ interface KaminoPoints {
   avgBoost: number;
 }
 
+interface TokenPrice {
+  value: number;
+  updateUnixTime: number;
+}
+
+interface HistoricalTokenPrice {
+  unixTime: number;
+  value: number;
+}
+
 export const getKaminoPoints = async (
   walletAddress: string
 ): Promise<KaminoPoints> => {
@@ -134,6 +144,62 @@ export const fetchAllTokensBalance = async (
     throw error;
   }
 };
+
+export const getTokenPrice = async (
+  tokenAddress: string
+): Promise<TokenPrice[]> => {
+ try{
+  const apiKey = process.env.NEXT_BIRDEYE_API_KEY;
+  if (!apiKey) {
+    throw new Error('API key not found in environment variables.');
+  }
+  const url = `https://public-api.birdeye.so/public/price?address=${tokenAddress}`;
+  const headers = {
+    'Content-Type': 'application/json',
+    'x-api-key': apiKey,
+    'x-chain': 'solana',
+  };
+
+  const response: AxiosResponse<TokenPrice[]> = await axios.get(
+    url,
+    { headers }
+  );
+
+  return response.data;
+  } catch (error) {
+    console.error('Error fetching token price:', error);
+    throw error;
+ }
+};
+
+export const getHistoricalTokenPrice = async (
+  tokenAddress: string,
+  time_from: number, //unixtime 
+  time_to: number, //unixtime
+): Promise<HistoricalTokenPrice[]> => {
+  try {
+    const apiKey = process.env.NEXT_BIRDEYE_API_KEY;
+    if (!apiKey) {
+      throw new Error('API key not found in environment variables.');
+    }
+    const url = `https://public-api.birdeye.so/public/history_price?address=${tokenAddress}&address_type=token&time_from=${time_from}&time_to=${time_to}`;
+    const headers = {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'x-chain': 'solana',
+    };
+
+    const response: AxiosResponse<HistoricalTokenPrice[]> = await axios.get(
+      url,
+      { headers }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching historical token price:', error);
+    throw error;
+  }
+}
 
 export const getPortfolio = async (
   walletAddress: string
