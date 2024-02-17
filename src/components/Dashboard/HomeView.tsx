@@ -9,7 +9,7 @@ import {
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import Image from 'next/image';
 
-function Home() {
+function HomeView() {
   const [showPubKey, setShowPubKey] = useState<boolean>(false);
   const [examplePubKey, setExamplePubKey] = useState<string>(
     '7Bi8CQX7sV2wWSP4wCeE2rpHD8PdcQ3L99N8J2sKGSRT'
@@ -57,7 +57,7 @@ function Home() {
   //console.log('Assets:', categories.Assets);
 
   return (
-    <div className=" w-full h-full lg:p-10 ">
+    <div className=" w-full  lg:p-10  ">
       <div className=" w-full h-5 mb-10 ">
         <Menu>
           <Menu.Button
@@ -93,7 +93,9 @@ function Home() {
           </Menu.Items>
         </Menu>
       </div>
-      <Tab.Group>
+      <Tab.Group
+        className="w-full h-full"
+        as="div">
         <Tab.List className="flex  p-1 lg:w-1/3  bg-white/[0.12] rounded-md ">
           {Object.keys(categories).map((category) => (
             <Tab
@@ -111,7 +113,7 @@ function Home() {
             </Tab>
           ))}
         </Tab.List>
-        <Tab.Panels className="mt-4 p-4 border border-neutral-800 rounded-lg w-6/8 ">
+        <Tab.Panels className="mt-4 p-4 border border-neutral-800 rounded-lg w-full ">
           {Object.keys(categories).map((category, idx) => (
             <Tab.Panel
               key={idx}
@@ -119,12 +121,12 @@ function Home() {
               {categories[category].length > 0 ? (
                 <div className="overflow-x-auto">
                   <div className="border border-neutral-800 rounded-lg">
-                    <div className="grid grid-cols-8 text-md text-left">
+                    <div className="grid grid-cols-9 text-md text-left">
                       <div className="p-2">Asset</div>
                       <div className="p-2 col-span-2">Token Name</div>
                       <div className="p-2">Symbol</div>
                       <div className="p-2">Balance</div>
-                      <div className="p-2 col-span-2">
+                      <div className="p-2 col-span-3">
                         Associated Account
                       </div>{' '}
                       {/* Adjusted column span */}
@@ -135,7 +137,7 @@ function Home() {
                         .map((token: any, index: number) => (
                           <div
                             key={index}
-                            className="grid grid-cols-8 text-sm">
+                            className="grid grid-cols-9 text-sm">
                             {/* Adjusted width for the image column */}
                             <div className="p-2">
                               <Image
@@ -152,7 +154,7 @@ function Home() {
                             </div>
                             <div className="p-2">{token.info.symbol}</div>
                             <div className="p-2">{token.balance}</div>
-                            <div className="p-2 col-span-2 font-medium">
+                            <div className="p-2 col-span-3 font-medium">
                               {' '}
                               {/* Adjusted column span */}
                               {token.associated_account}
@@ -176,4 +178,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default HomeView;

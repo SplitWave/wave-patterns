@@ -5,7 +5,7 @@ import { TbSearch } from 'react-icons/tb';
 import { BsPeople } from 'react-icons/bs';
 import { TiHomeOutline } from 'react-icons/ti';
 import { MdOutlineFeedback } from 'react-icons/md';
-import Home from '../Dashboard/Home';
+import HomeView from './HomeView';
 
 export function classNames(
   ...classes: Array<string | boolean | undefined | null>
@@ -59,7 +59,7 @@ function Dashboard() {
         </Tab.List>
         <Tab.Panels className="lg:w-11/12">
           <Tab.Panel>
-            <Home />
+            <HomeView />
           </Tab.Panel>
           <Tab.Panel>Content 2</Tab.Panel>
           <Tab.Panel>Content 3</Tab.Panel>

@@ -1,11 +1,10 @@
-import Dashboard from '@/components/Dashboard/Dashboard';
+'use client';
+import HomeView from '@/components/Dashboard/HomeView';
 
 export default function Home() {
   return (
-    <main className="">
-      <div>
-        <Dashboard />
-      </div>
-    </main>
+    <div className="w-full h-full">
+      <HomeView />
+    </div>
   );
 }
