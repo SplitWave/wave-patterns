@@ -3,8 +3,10 @@ import { Tab, Menu } from '@headlessui/react';
 import { classNames } from './Dashboard';
 import {
   AllTokensBalanceResponse,
+  TokenPrice,
   fetchAllTokensBalance,
   getFarmsUserState,
+  getTokenPrice,
 } from '@/utils/helpers';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import Image from 'next/image';
@@ -23,13 +25,45 @@ function HomeView() {
   const fetchData = async () => {
     try {
       const response: any = await fetchAllTokensBalance(
-        '9pg3RVmbsz7U1DnVCHPGZeAPSnQwTCPX5iNn257D2qzK'
+        '8JYVFy3pYsPSpPRsqf43KSJFnJzn83nnRLQgG88XKB8q'
       ); // Fetch token balances
       if (response.success) {
         // If the response is successful, update the state
+        const assetsWithPrices = await Promise.all(
+          response.result.map(async (token: any) => {
+            try {
+              const tokenPrices: any = await getTokenPrice(token.address);
+              const tokenPrice: any = tokenPrices.data;
+              //console.log('tokenPrice', tokenPrice);
+              if (tokenPrice) {
+                // If tokenPrice is not null, assign its values
+                return {
+                  ...token,
+                  price: tokenPrice.value,
+                  updateUnixTime: tokenPrice.updateUnixTime,
+                };
+              } else {
+                // If tokenPrice is null, set default values or handle as needed
+                return {
+                  ...token,
+                  price: null,
+                  updateUnixTime: null,
+                };
+              }
+            } catch (error) {
+              console.error('Error fetching token price:', error);
+              return {
+                ...token,
+                price: null, // Set price to null if there's an error fetching the price
+                updateUnixTime: null,
+              };
+            }
+          })
+        );
+
         setCategories((prevCategories: any) => ({
           ...prevCategories,
-          Assets: response.result, // Update the Assets array with token balances
+          Assets: assetsWithPrices, // Update the Assets array with token balances and prices
         }));
       } else {
         console.error('Error fetching token balances:', response.message);
@@ -113,7 +147,7 @@ function HomeView() {
             </Tab>
           ))}
         </Tab.List>
-        <Tab.Panels className="mt-4 p-4 border border-neutral-800 rounded-lg w-full ">
+        <Tab.Panels className="mt-4 p-4 border border-neutral-800 rounded-lg lg:w-2/3 ">
           {Object.keys(categories).map((category, idx) => (
             <Tab.Panel
               key={idx}
@@ -121,23 +155,20 @@ function HomeView() {
               {categories[category].length > 0 ? (
                 <div className="overflow-x-auto">
                   <div className="border border-neutral-800 rounded-lg">
-                    <div className="grid grid-cols-9 text-md text-left">
+                    <div className="grid grid-cols-6 text-md text-left">
                       <div className="p-2">Asset</div>
                       <div className="p-2 col-span-2">Token Name</div>
-                      <div className="p-2">Symbol</div>
+                      <div className="p-2">Current Price</div>
                       <div className="p-2">Balance</div>
-                      <div className="p-2 col-span-3">
-                        Associated Account
-                      </div>{' '}
-                      {/* Adjusted column span */}
                     </div>
                     <div className="border-t border-neutral-800">
                       {categories[category]
-                        .slice(0, 7)
+                        .slice(0, 5)
+                        .filter((token: any) => token.balance !== 0)
                         .map((token: any, index: number) => (
                           <div
                             key={index}
-                            className="grid grid-cols-9 text-sm">
+                            className="grid grid-cols-6 text-sm">
                             {/* Adjusted width for the image column */}
                             <div className="p-2">
                               <Image
@@ -152,12 +183,13 @@ function HomeView() {
                             <div className="p-2 col-span-2 ">
                               {token.info.name}
                             </div>
-                            <div className="p-2">{token.info.symbol}</div>
-                            <div className="p-2">{token.balance}</div>
-                            <div className="p-2 col-span-3 font-medium">
-                              {' '}
-                              {/* Adjusted column span */}
-                              {token.associated_account}
+                            <div className="p-2">
+                              {token.price
+                                ? `$${token.price.toString().substring(0, 6)}`
+                                : '-'}
+                            </div>
+                            <div className="p-2">
+                              {token.balance.toString().substring(0, 6)}
                             </div>
                           </div>
                         ))}

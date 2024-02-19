@@ -96,7 +96,7 @@ interface KaminoPoints {
   avgBoost: number;
 }
 
-interface TokenPrice {
+export interface TokenPrice {
   value: number;
   updateUnixTime: number;
 }
@@ -148,34 +148,33 @@ export const fetchAllTokensBalance = async (
 export const getTokenPrice = async (
   tokenAddress: string
 ): Promise<TokenPrice[]> => {
- try{
-  const apiKey = process.env.NEXT_BIRDEYE_API_KEY;
-  if (!apiKey) {
-    throw new Error('API key not found in environment variables.');
-  }
-  const url = `https://public-api.birdeye.so/public/price?address=${tokenAddress}`;
-  const headers = {
-    'Content-Type': 'application/json',
-    'x-api-key': apiKey,
-    'x-chain': 'solana',
-  };
+  try {
+    const apiKey = process.env.NEXT_PUBLIC_BIRDEYE_API_KEY;
+    if (!apiKey) {
+      throw new Error('API key not found in environment variables.');
+    }
+    const url = `https://public-api.birdeye.so/public/price?address=${tokenAddress}`;
+    const headers = {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'x-chain': 'solana',
+    };
 
-  const response: AxiosResponse<TokenPrice[]> = await axios.get(
-    url,
-    { headers }
-  );
+    const response: AxiosResponse<TokenPrice[]> = await axios.get(url, {
+      headers,
+    });
 
-  return response.data;
+    return response.data;
   } catch (error) {
     console.error('Error fetching token price:', error);
     throw error;
- }
+  }
 };
 
 export const getHistoricalTokenPrice = async (
   tokenAddress: string,
-  time_from: number, //unixtime 
-  time_to: number, //unixtime
+  time_from: number, //unixtime
+  time_to: number //unixtime
 ): Promise<HistoricalTokenPrice[]> => {
   try {
     const apiKey = process.env.NEXT_BIRDEYE_API_KEY;
@@ -199,7 +198,7 @@ export const getHistoricalTokenPrice = async (
     console.error('Error fetching historical token price:', error);
     throw error;
   }
-}
+};
 
 export const getPortfolio = async (
   walletAddress: string
