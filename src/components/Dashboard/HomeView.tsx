@@ -14,7 +14,7 @@ import Image from 'next/image';
 function HomeView() {
   const [showPubKey, setShowPubKey] = useState<boolean>(false);
   const [examplePubKey, setExamplePubKey] = useState<string>(
-    '7Bi8CQX7sV2wWSP4wCeE2rpHD8PdcQ3L99N8J2sKGSRT'
+    'E6HqfDLnE8Jk1BtGWFRWj8TsrceCJhkQoCcFmqZRmtAV'
   );
   let [categories, setCategories] = useState<any>({
     Assets: [],
@@ -25,7 +25,7 @@ function HomeView() {
   const fetchData = async () => {
     try {
       const response: any = await fetchAllTokensBalance(
-        '8JYVFy3pYsPSpPRsqf43KSJFnJzn83nnRLQgG88XKB8q'
+        'E6HqfDLnE8Jk1BtGWFRWj8TsrceCJhkQoCcFmqZRmtAV'
       ); // Fetch token balances
       if (response.success) {
         // If the response is successful, update the state
