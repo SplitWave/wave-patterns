@@ -147,7 +147,7 @@ function HomeView() {
             </Tab>
           ))}
         </Tab.List>
-        <Tab.Panels className="mt-4 p-4 border border-neutral-800 rounded-lg lg:w-2/3 ">
+        <Tab.Panels className="mt-4 p-4 border border-neutral-800 rounded-lg lg:w-3/3 ">
           {Object.keys(categories).map((category, idx) => (
             <Tab.Panel
               key={idx}
@@ -155,15 +155,22 @@ function HomeView() {
               {categories[category].length > 0 ? (
                 <div className="overflow-x-auto">
                   <div className="border border-neutral-800 rounded-lg">
-                    <div className="grid grid-cols-6 text-md text-left">
+                    <div className="grid grid-cols-9 text-md text-center">
                       <div className="p-2">Asset</div>
-                      <div className="p-2 col-span-2">Token Name</div>
+                      <div className="p-2 col-span-2">Asset Name</div>
                       <div className="p-2">Current Price</div>
                       <div className="p-2">Balance</div>
+                      {/* balance * price */}
+                      <div className="p-2">Current value</div> 
+
+                      <div className="p-2"> Cost Basis</div>  
+                      <div className="p-2">Unrealized gain</div>  
+                      <div className="p-2">Return</div>  
                     </div>
                     <div className="border-t border-neutral-800">
                       {categories[category]
-                        .slice(0, 5)
+                      // Junaid changed this to 100 cause 5 only showed 5 tokens - please fix this
+                        .slice(0, 100)
                         .filter((token: any) => token.balance !== 0)
                         .map((token: any, index: number) => (
                           <div
