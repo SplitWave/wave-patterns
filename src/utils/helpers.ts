@@ -171,6 +171,37 @@ export const getTokenPrice = async (
   }
 };
 
+export const getMultipleTokenPrice = async (
+  tokenAddresses: string[]
+): Promise<TokenPrice[]> => {
+  try {
+    const apiKey = process.env.NEXT_PUBLIC_BIRDEYE_API_KEY;
+    if (!apiKey) {
+      throw new Error('API key not found in environment variables.');
+    }
+
+    // Construct the URL with the list of token addresses
+    const url = `https://public-api.birdeye.so/public/multi_price?list_address=${tokenAddresses.join(
+      '%2C'
+    )}`;
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'x-chain': 'solana',
+    };
+
+    const response: AxiosResponse<TokenPrice[]> = await axios.get(url, {
+      headers,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching multiple token prices:', error);
+    throw error;
+  }
+};
+
 export const getHistoricalTokenPrice = async (
   tokenAddress: string,
   time_from: number, //unixtime

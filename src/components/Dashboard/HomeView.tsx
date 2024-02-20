@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Tab, Menu } from '@headlessui/react';
 import { classNames } from './Dashboard';
-import {
-  AllTokensBalanceResponse,
-  TokenPrice,
-  fetchAllTokensBalance,
-  getFarmsUserState,
-  getTokenPrice,
-} from '@/utils/helpers';
+import { fetchAllTokensBalance, getMultipleTokenPrice } from '@/utils/helpers';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import Image from 'next/image';
 import { useWallet } from '@/context/WalletContext';
@@ -32,30 +26,32 @@ function HomeView() {
 
       if (tokenBalanceResponse.success) {
         const tokenBalances = tokenBalanceResponse.result;
-        const assetsWithPrices: any = [];
+        const tokenAddresses = tokenBalances.map((token: any) => token.address);
 
-        for (const token of tokenBalances) {
-          try {
-            const tokenPrices: any = await getTokenPrice(token.address);
-            const tokenPrice: any = tokenPrices.data;
+        // Fetch prices for multiple tokens
+        const tokenPricesResponse: any = await getMultipleTokenPrice(
+          tokenAddresses
+        );
 
-            const tokenWithPrice = {
-              ...token,
-              price: tokenPrice ? tokenPrice.value : null,
-              updateUnixTime: tokenPrice ? tokenPrice.updateUnixTime : null,
-            };
+        // Extract the data object from the response
+        const tokenPrices = tokenPricesResponse.data;
 
-            assetsWithPrices.push(tokenWithPrice);
-          } catch (error) {
-            console.error('Error fetching token price:', error);
-            const tokenWithPrice = {
-              ...token,
-              price: null,
-              updateUnixTime: null,
-            };
-            assetsWithPrices.push(tokenWithPrice);
-          }
-        }
+        //console.log('token prices', tokenPrices);
+
+        // Merge token balances with prices
+        const assetsWithPrices = tokenBalances.map((token: any) => {
+          // Find the price corresponding to the token address
+          const tokenPriceInfo = tokenPrices[token.address];
+
+          // Extract the price value from the token price info
+          const tokenPrice = tokenPriceInfo ? tokenPriceInfo.value : null;
+
+          return {
+            ...token,
+            price: tokenPrice,
+            // Update other properties as needed
+          };
+        });
 
         setCategories((prevCategories: any) => ({
           ...prevCategories,
