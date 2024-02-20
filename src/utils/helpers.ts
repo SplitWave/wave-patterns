@@ -146,7 +146,9 @@ export const fetchAllTokensBalance = async (
 };
 
 export const getTokenPrice = async (
-  tokenAddress: string
+  tokenAddress: string,
+  retries = 5,
+  delay = 2000 // 1000 milliseconds delay
 ): Promise<TokenPrice[]> => {
   try {
     const apiKey = process.env.NEXT_PUBLIC_BIRDEYE_API_KEY;
@@ -167,9 +169,20 @@ export const getTokenPrice = async (
     return response.data;
   } catch (error) {
     console.error('Error fetching token price:', error);
-    throw error;
+    if (retries > 0) {
+      // Calculate the delay using exponential backoff
+      const nextDelay = delay * 2;
+      // Retry after delay
+      await new Promise(resolve => setTimeout(resolve, delay));
+      // Recursive call with reduced number of retries and increased delay
+      return getTokenPrice(tokenAddress, retries - 1, nextDelay);
+    } else {
+      // No more retries left, throw error
+      throw error;
+    }
   }
 };
+
 
 export const getHistoricalTokenPrice = async (
   tokenAddress: string,
