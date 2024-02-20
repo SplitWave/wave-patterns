@@ -12,6 +12,8 @@ import { FiEye, FiEyeOff } from 'react-icons/fi';
 import Image from 'next/image';
 import { useWallet } from '@/context/WalletContext';
 import { BeatLoader } from 'react-spinners';
+import 'chart.js/auto';
+import { Doughnut } from 'react-chartjs-2';
 
 function HomeView() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -22,6 +24,41 @@ function HomeView() {
     Analytics: [],
     Notifications: [],
   });
+
+  // Extract the Assets data from the categories state
+  const assetsData = categories.Assets;
+
+  // Map the assetsData to create the DonutChartData object
+  const DonutChartData = {
+    labels: assetsData.map((asset: any) => asset.info.name), // Assuming each asset has a 'name' property
+    datasets: [
+      {
+        label: 'Assets',
+        data: assetsData.map((asset: any) => asset.balance), // Assuming each asset has a 'balance' property
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.6)', // Red
+          'rgba(54, 162, 235, 0.6)', // Blue
+          'rgba(255, 206, 86, 0.6)', // Yellow
+          'rgba(75, 192, 192, 0.6)', // Cyan
+          'rgba(153, 102, 255, 0.6)', // Purple
+          'rgba(255, 159, 64, 0.6)', // Orange
+          'rgba(51, 204, 153, 0.6)', // Green
+          'rgba(255, 153, 204, 0.6)', // Pink
+          'rgba(153, 153, 153, 0.6)', // Gray
+          'rgba(102, 153, 255, 0.6)', // Light Blue
+        ],
+        hoverOffset: 4,
+      },
+    ],
+  };
+
+  const options = {
+    plugins: {
+      legend: {
+        display: false, // Hide the legend
+      },
+    },
+  };
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -149,72 +186,101 @@ function HomeView() {
             </Tab>
           ))}
         </Tab.List>
-        <Tab.Panels className="mt-4 p-4 border border-neutral-800 rounded-lg lg:w-2/3 ">
+        <Tab.Panels>
           {Object.keys(categories).map((category, idx) => (
-            <Tab.Panel
-              key={idx}
-              className="focus:outline-none  ">
-              {isLoading ? (
-                <div className="w-full h-full flex justify-center items-center ">
-                  <BeatLoader color="white" />
-                </div>
-              ) : (
-                <>
-                  {categories[category].length > 0 ? (
-                    <div className="overflow-x-auto">
-                      <div className="border border-neutral-800 rounded-lg">
-                        <div className="grid grid-cols-6 text-md text-left">
-                          <div className="p-2">Asset</div>
-                          <div className="p-2 col-span-2">Token Name</div>
-                          <div className="p-2">Current Price</div>
-                          <div className="p-2">Balance</div>
-                        </div>
-                        <div className="border-t border-neutral-800">
-                          {categories[category]
-                            .slice(0, 5)
-                            .filter((token: any) => token.balance !== 0)
-                            .map((token: any, index: number) => (
-                              <div
-                                key={index}
-                                className="grid grid-cols-6 text-sm">
-                                {/* Adjusted width for the image column */}
-                                <div className="p-2">
-                                  <Image
-                                    loader={({ src }) => src}
-                                    src={token.info.image}
-                                    alt=""
-                                    width={30}
-                                    height={30}
-                                    className="rounded-md"
-                                  />
+            <div key={idx}>
+              {category === 'Assets' && (
+                <Tab.Panel className=" flex flex-row justify-between space-x-6 ">
+                  {/**Assets Box */}
+                  <div className="focus:outline-none mt-4 p-4 border border-neutral-800 rounded-lg lg:w-2/4 ">
+                    {isLoading ? (
+                      <div className="w-full h-full flex justify-center items-center ">
+                        <BeatLoader color="white" />
+                      </div>
+                    ) : (
+                      <div className=" ">
+                        {categories[category].length > 0 ? (
+                          <>
+                            <div className="overflow-x-auto">
+                              <div className="border border-neutral-800 rounded-lg">
+                                <div className="grid grid-cols-6 text-md text-left">
+                                  <div className="p-2">Asset</div>
+                                  <div className="p-2 col-span-2">
+                                    Token Name
+                                  </div>
+                                  <div className="p-2">Current Price</div>
+                                  <div className="p-2">Balance</div>
                                 </div>
-                                <div className="p-2 col-span-2 ">
-                                  {token.info.name}
-                                </div>
-                                <div className="p-2">
-                                  {token.price
-                                    ? `$${token.price
-                                        .toString()
-                                        .substring(0, 6)}`
-                                    : '-'}
-                                </div>
-                                <div className="p-2">
-                                  {token.balance.toString().substring(0, 6)}
+                                <div className="border-t border-neutral-800">
+                                  {categories[category]
+                                    //.slice(0, 10)
+                                    .filter((token: any) => token.balance !== 0)
+                                    .map((token: any, index: number) => (
+                                      <div
+                                        key={index}
+                                        className="grid grid-cols-6 text-sm">
+                                        {/* Adjusted width for the image column */}
+                                        <div className="p-2">
+                                          <Image
+                                            loader={({ src }) => src}
+                                            src={token.info.image}
+                                            alt=""
+                                            width={30}
+                                            height={30}
+                                            className="rounded-md"
+                                          />
+                                        </div>
+                                        <div className="p-2 col-span-2 ">
+                                          {token.info.name}
+                                        </div>
+                                        <div className="p-2">
+                                          {token.price
+                                            ? `$${token.price
+                                                .toString()
+                                                .substring(0, 6)}`
+                                            : '-'}
+                                        </div>
+                                        <div className="p-2">
+                                          {token.balance
+                                            .toString()
+                                            .substring(0, 6)}
+                                        </div>
+                                      </div>
+                                    ))}
                                 </div>
                               </div>
-                            ))}
-                        </div>
+                            </div>
+                          </>
+                        ) : (
+                          <p>No {category} found</p>
+                        )}
                       </div>
-                    </div>
-                  ) : (
-                    <p>No {category} found</p>
-                  )}
-                  <div className=" text-center text-sm mt-2 ">
-                    Click here to see more
+                    )}
                   </div>
-                </>
+                  {/**Assets Box */}
+                  {/**Donut chart */}
+                  <div className="focus:outline-none mt-4 p-4 border border-neutral-800 rounded-lg lg:w-2/4  ">
+                    {isLoading ? (
+                      <div className="w-full h-full flex justify-center items-center ">
+                        <BeatLoader color="white" />
+                      </div>
+                    ) : (
+                      <div>
+                        {categories[category].length > 0 ? (
+                          <Doughnut
+                            data={DonutChartData}
+                            options={options}
+                          />
+                        ) : (
+                          <p>No {category} found</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {/**DOnut chart */}
+                </Tab.Panel>
               )}
-            </Tab.Panel>
+            </div>
           ))}
         </Tab.Panels>
       </Tab.Group>
