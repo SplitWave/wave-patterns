@@ -12,8 +12,6 @@ import { FiEye, FiEyeOff } from 'react-icons/fi';
 import Image from 'next/image';
 import { useWallet } from '@/context/WalletContext';
 import { BeatLoader } from 'react-spinners';
-import 'chart.js/auto';
-import { Doughnut } from 'react-chartjs-2';
 
 function HomeView() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -24,41 +22,6 @@ function HomeView() {
     Analytics: [],
     Notifications: [],
   });
-
-  // Extract the Assets data from the categories state
-  const assetsData = categories.Assets;
-
-  // Map the assetsData to create the DonutChartData object
-  const DonutChartData = {
-    labels: assetsData.map((asset: any) => asset.info.name), // Assuming each asset has a 'name' property
-    datasets: [
-      {
-        label: 'Assets',
-        data: assetsData.map((asset: any) => asset.balance), // Assuming each asset has a 'balance' property
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.6)', // Red
-          'rgba(54, 162, 235, 0.6)', // Blue
-          'rgba(255, 206, 86, 0.6)', // Yellow
-          'rgba(75, 192, 192, 0.6)', // Cyan
-          'rgba(153, 102, 255, 0.6)', // Purple
-          'rgba(255, 159, 64, 0.6)', // Orange
-          'rgba(51, 204, 153, 0.6)', // Green
-          'rgba(255, 153, 204, 0.6)', // Pink
-          'rgba(153, 153, 153, 0.6)', // Gray
-          'rgba(102, 153, 255, 0.6)', // Light Blue
-        ],
-        hoverOffset: 4,
-      },
-    ],
-  };
-
-  const options = {
-    plugins: {
-      legend: {
-        display: false, // Hide the legend
-      },
-    },
-  };
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -258,7 +221,7 @@ function HomeView() {
                     )}
                   </div>
                   {/**Assets Box */}
-                  {/**Donut chart */}
+                  {/**Staked info Box */}
                   <div className="focus:outline-none mt-4 p-4 border border-neutral-800 rounded-lg lg:w-2/4  ">
                     {isLoading ? (
                       <div className="w-full h-full flex justify-center items-center ">
@@ -267,17 +230,14 @@ function HomeView() {
                     ) : (
                       <div>
                         {categories[category].length > 0 ? (
-                          <Doughnut
-                            data={DonutChartData}
-                            options={options}
-                          />
+                          <></>
                         ) : (
                           <p>No {category} found</p>
                         )}
                       </div>
                     )}
                   </div>
-                  {/**DOnut chart */}
+                  {/**Staked info Box */}
                 </Tab.Panel>
               )}
             </div>
