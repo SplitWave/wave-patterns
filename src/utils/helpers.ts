@@ -250,8 +250,21 @@ export const getStakeAccounts = async (
   size: number
 ): Promise<StakeAccountsResponse> => {
   try {
+    const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+    if (!apiKey) {
+      throw new Error('API key not found in environment variables.');
+    }
     const url = `https://api.shyft.to/sol/v1/wallet/stake_accounts?network=devnet&wallet_address=${walletAddress}&page=${page}&size=${size}`;
-    const response: AxiosResponse<StakeAccountsResponse> = await axios.get(url);
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+    };
+
+    const response: AxiosResponse<StakeAccountsResponse> = await axios.get(
+      url,
+      { headers }
+    );
     return response.data;
   } catch (error) {
     console.error('Error fetching stake accounts:', error);
