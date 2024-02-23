@@ -78,7 +78,7 @@ function HomeView() {
     setIsLoading(true);
     try {
       const response: any = await getStakeAccounts(
-        '3YNyqvs6aGGtgtRKQ27ysP6GK5vVJ37vq86JWqyfyLD2',
+        'CCoSKkgPWC1CSBki4LM9cCp9hM9zURQyfgY6h3UtNitR',
         4,
         5
       );
@@ -305,7 +305,66 @@ function HomeView() {
                           )}
                         </Tab.Panel>
                         <Tab.Panel>
-                          <div>Panel 2</div>
+                          {isLoading ? (
+                            <div className="w-full h-full flex justify-center items-center ">
+                              <BeatLoader color="white" />
+                            </div>
+                          ) : (
+                            <div>
+                              {datas.StakedAccounts.length > 0 ? (
+                                <div className="overflow-x-auto">
+                                  <div className="border border-neutral-800 rounded-lg  ">
+                                    <div className="grid grid-cols-5 text-md text-left p-2">
+                                      <div className="p-2 col-span-2 ">
+                                        Stake Account
+                                      </div>
+                                      <div className="p-2">
+                                        Total Amount (SOL)
+                                      </div>
+                                      <div className="p-2">Status</div>
+                                      <div className="p-2">
+                                        Active Stake (SOL)
+                                      </div>
+                                    </div>
+                                    <div className="border-t border-neutral-800 p-2">
+                                      {/* Iterate over StakedAccounts and render each stake account */}
+                                      {datas.StakedAccounts.map(
+                                        (stakeAccount: any, index: any) => (
+                                          <div
+                                            key={index}
+                                            className="grid grid-cols-5 text-sm  ">
+                                            <div className="p-2 text-blue-300 col-span-2 ">
+                                              <a
+                                                href={`https://solscan.io/account/${stakeAccount.stake_account_address}`}>
+                                                {`${stakeAccount.stake_account_address
+                                                  .toString()
+                                                  .slice(0, 16)}...`}
+                                              </a>
+                                            </div>
+                                            <div className="p-2">
+                                              {stakeAccount.total_amount
+                                                .toString()
+                                                .slice(0, 8)}
+                                            </div>
+                                            <div className="p-2">
+                                              {stakeAccount.state}
+                                            </div>
+                                            <div className="p-2">
+                                              {stakeAccount.active_amount
+                                                .toString()
+                                                .slice(0, 8)}
+                                            </div>
+                                          </div>
+                                        )
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              ) : (
+                                <p>No stake accounts found</p>
+                              )}
+                            </div>
+                          )}
                         </Tab.Panel>
                       </Tab.Panels>
                     </Tab.Group>

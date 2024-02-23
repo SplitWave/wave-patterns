@@ -254,7 +254,7 @@ export const getStakeAccounts = async (
     if (!apiKey) {
       throw new Error('API key not found in environment variables.');
     }
-    const url = `https://api.shyft.to/sol/v1/wallet/stake_accounts?network=devnet&wallet_address=${walletAddress}&page=${page}&size=${size}`;
+    const url = `https://api.shyft.to/sol/v1/wallet/stake_accounts?network=mainnet-beta&wallet_address=${walletAddress}&page=${page}&size=${size}`;
 
     const headers = {
       'Content-Type': 'application/json',
