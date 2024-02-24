@@ -90,7 +90,7 @@ interface StakeAccountsResponse {
   };
 }
 
-interface KaminoPoints {
+export interface KaminoPoints {
   leaderboardRank: number;
   totalPointsEarned: number;
   avgBoost: number;

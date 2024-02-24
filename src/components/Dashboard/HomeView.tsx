@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Tab, Menu } from '@headlessui/react';
 import { classNames } from './Dashboard';
 import {
+  KaminoPoints,
   fetchAllTokensBalance,
+  getKaminoPoints,
   getMultipleTokenPrice,
   getStakeAccounts,
 } from '@/utils/helpers';
@@ -10,6 +12,9 @@ import { FiEye, FiEyeOff } from 'react-icons/fi';
 import Image from 'next/image';
 import { useWallet } from '@/context/WalletContext';
 import { BeatLoader } from 'react-spinners';
+import AssetsTable from '../Tables/AssetsTable';
+import StakedAccountTable from '../Tables/StakedAccountTable';
+import KaminoPointsTable from '../Tables/KaminoPointsTable';
 
 function HomeView() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -18,6 +23,7 @@ function HomeView() {
   let [datas, setDatas] = useState<any>({
     Assets: [],
     StakedAccounts: [],
+    KaminoPoints: [],
   });
 
   const fetchAssets = async () => {
@@ -97,6 +103,23 @@ function HomeView() {
     }
   };
 
+  const fetchKaminoPoints = async () => {
+    try {
+      // Fetch Kamino points data
+      const kaminoPointsData: KaminoPoints = await getKaminoPoints(
+        walletAddress
+      );
+
+      // Update the state with Kamino points data
+      setDatas((prevDatas: any) => ({
+        ...prevDatas,
+        KaminoPoints: kaminoPointsData,
+      }));
+    } catch (error) {
+      console.error('Error fetching Kamino points:', error);
+    }
+  };
+
   // async function fetchBorrowingUserMetadata() {
   //   const publicKey = '7Bi8CQX7sV2wWSP4wCeE2rpHD8PdcQ3L99N8J2sKGSRT'; // Example publicKey
   //   try {
@@ -111,9 +134,10 @@ function HomeView() {
     //fetchBorrowingUserMetadata();
     fetchAssets();
     fetchStakeAccounts();
+    fetchKaminoPoints();
   }, [walletAddress]);
 
-  console.log('Stake Accounts :', datas.StakedAccounts);
+  console.log('Kamino Points :', datas.KaminoPoints);
 
   return (
     <div className=" w-full  lg:p-10  ">
@@ -197,9 +221,9 @@ function HomeView() {
           {Object.keys(datas).map((data, idx) => (
             <div key={idx}>
               {data === 'Assets' && (
-                <Tab.Panel className=" flex flex-row justify-between space-x-6  ">
+                <Tab.Panel className=" grid grid-cols-2 grid-auto-rows gap-7  ">
                   {/**Assets Box */}
-                  <div className="focus:outline-none mt-4 p-4 border border-neutral-800 rounded-lg lg:w-2/4  ">
+                  <div className="focus:outline-none mt-4 p-4 border border-neutral-800 rounded-lg   ">
                     <Tab.Group
                       as="div"
                       className="w-full">
@@ -238,66 +262,7 @@ function HomeView() {
                           ) : (
                             <div className=" ">
                               {datas[data].length > 0 ? (
-                                <>
-                                  <div className="overflow-x-auto">
-                                    <div className="border border-neutral-800 rounded-lg">
-                                      <div className="grid grid-cols-6 text-md text-left">
-                                        <div className="p-2">Asset</div>
-                                        <div className="p-2 col-span-2">
-                                          Token Name
-                                        </div>
-                                        <div className="p-2">Current Price</div>
-                                        <div className="p-2">Balance</div>
-                                        <div className="p-2">Current Value</div>
-                                      </div>
-                                      <div className="border-t border-neutral-800">
-                                        {datas[data]
-                                          //.slice(0, 10)
-                                          .filter(
-                                            (token: any) => token.balance !== 0
-                                          )
-                                          .map((token: any, index: number) => (
-                                            <div
-                                              key={index}
-                                              className="grid grid-cols-6 text-sm">
-                                              {/* Adjusted width for the image column */}
-                                              <div className="p-2">
-                                                <Image
-                                                  loader={({ src }) => src}
-                                                  src={token.info.image}
-                                                  alt=""
-                                                  width={30}
-                                                  height={30}
-                                                  className="rounded-md"
-                                                />
-                                              </div>
-                                              <div className="p-2 col-span-2 ">
-                                                {token.info.name}
-                                              </div>
-                                              <div className="p-2">
-                                                {token.price
-                                                  ? `$${token.price.toFixed(2)}`
-                                                  : '-'}
-                                              </div>
-                                              <div className="p-2">
-                                                {token.balance
-                                                  .toString()
-                                                  .substring(0, 8)}
-                                              </div>
-                                              <div className="p-2">
-                                                {token.price && token.balance
-                                                  ? `$${(
-                                                      token.price *
-                                                      token.balance
-                                                    ).toFixed(2)}`
-                                                  : '-'}
-                                              </div>
-                                            </div>
-                                          ))}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </>
+                                <AssetsTable datas={datas} />
                               ) : (
                                 <p>No {data} found</p>
                               )}
@@ -312,54 +277,7 @@ function HomeView() {
                           ) : (
                             <div>
                               {datas.StakedAccounts.length > 0 ? (
-                                <div className="overflow-x-auto">
-                                  <div className="border border-neutral-800 rounded-lg  ">
-                                    <div className="grid grid-cols-5 text-md text-left p-2">
-                                      <div className="p-2 col-span-2 ">
-                                        Stake Account
-                                      </div>
-                                      <div className="p-2">
-                                        Total Amount (SOL)
-                                      </div>
-                                      <div className="p-2">Status</div>
-                                      <div className="p-2">
-                                        Active Stake (SOL)
-                                      </div>
-                                    </div>
-                                    <div className="border-t border-neutral-800 p-2">
-                                      {/* Iterate over StakedAccounts and render each stake account */}
-                                      {datas.StakedAccounts.map(
-                                        (stakeAccount: any, index: any) => (
-                                          <div
-                                            key={index}
-                                            className="grid grid-cols-5 text-sm  ">
-                                            <div className="p-2 text-blue-300 col-span-2 ">
-                                              <a
-                                                href={`https://solscan.io/account/${stakeAccount.stake_account_address}`}>
-                                                {`${stakeAccount.stake_account_address
-                                                  .toString()
-                                                  .slice(0, 16)}...`}
-                                              </a>
-                                            </div>
-                                            <div className="p-2">
-                                              {stakeAccount.total_amount
-                                                .toString()
-                                                .slice(0, 8)}
-                                            </div>
-                                            <div className="p-2">
-                                              {stakeAccount.state}
-                                            </div>
-                                            <div className="p-2">
-                                              {stakeAccount.active_amount
-                                                .toString()
-                                                .slice(0, 8)}
-                                            </div>
-                                          </div>
-                                        )
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
+                                <StakedAccountTable datas={datas} />
                               ) : (
                                 <p>No stake accounts found</p>
                               )}
@@ -370,8 +288,8 @@ function HomeView() {
                     </Tab.Group>
                   </div>
                   {/**Assets Box */}
-                  {/**Staked info Box */}
-                  <div className="focus:outline-none mt-4 p-4 border border-neutral-800 rounded-lg lg:w-2/4  ">
+                  {/** */}
+                  <div className="focus:outline-none mt-4 p-4 border border-neutral-800 rounded-lg   ">
                     {isLoading ? (
                       <div className="w-full h-full flex justify-center items-center ">
                         <BeatLoader color="white" />
@@ -386,11 +304,97 @@ function HomeView() {
                       </div>
                     )}
                   </div>
-                  {/**Staked info Box */}
+                  {/** */}
+                  {/**Kamino */}
+                  <div className="focus:outline-none mt-4 p-4 border border-neutral-800 rounded-lg  ">
+                    <Tab.Group
+                      as="div"
+                      className="w-full">
+                      <Tab.List className=" flex  p-1 w-full justify-between mb-2 bg-white/[0.12] rounded-md  ">
+                        <Tab
+                          className={({ selected }) =>
+                            classNames(
+                              'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-100',
+                              'focus:outline-none',
+                              selected
+                                ? 'bg-black  shadow'
+                                : 'text-blue-100  hover:text-white'
+                            )
+                          }>
+                          Kamino Points
+                        </Tab>
+                        <Tab
+                          className={({ selected }) =>
+                            classNames(
+                              'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-100',
+                              'focus:outline-none',
+                              selected
+                                ? 'bg-black  shadow'
+                                : 'text-blue-100  hover:text-white'
+                            )
+                          }>
+                          ____
+                        </Tab>
+                      </Tab.List>
+                      <Tab.Panels className="mt-4 ">
+                        <Tab.Panel>
+                          {isLoading ? (
+                            <div className="w-full h-full flex justify-center items-center ">
+                              <BeatLoader color="white" />
+                            </div>
+                          ) : (
+                            <div className=" ">
+                              {datas.KaminoPoints &&
+                              Object.keys(datas.KaminoPoints).length > 0 ? (
+                                <KaminoPointsTable datas={datas} />
+                              ) : (
+                                <p>No points found</p>
+                              )}
+                            </div>
+                          )}
+                        </Tab.Panel>
+                        <Tab.Panel>
+                          {isLoading ? (
+                            <div className="w-full h-full flex justify-center items-center ">
+                              <BeatLoader color="white" />
+                            </div>
+                          ) : (
+                            <div>
+                              {datas.KaminoPoints.length > 0 ? (
+                                <></>
+                              ) : (
+                                <p>No points found</p>
+                              )}
+                            </div>
+                          )}
+                        </Tab.Panel>
+                      </Tab.Panels>
+                    </Tab.Group>
+                  </div>
+                  {/**Kamino **/}
+                  {/** */}
+                  <div className="focus:outline-none mt-4 p-4 border border-neutral-800 rounded-lg   ">
+                    {isLoading ? (
+                      <div className="w-full h-full flex justify-center items-center ">
+                        <BeatLoader color="white" />
+                      </div>
+                    ) : (
+                      <div>
+                        {datas[data].length > 0 ? (
+                          <></>
+                        ) : (
+                          <p>No {data} found</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {/** **/}
                 </Tab.Panel>
               )}
             </div>
           ))}
+          <Tab.Panel>Analytics</Tab.Panel>
+          <Tab.Panel>Notifications</Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
     </div>
