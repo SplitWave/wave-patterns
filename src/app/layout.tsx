@@ -5,6 +5,22 @@ import Header from '@/components/Header';
 import Dashboard from '@/components/Dashboard/Dashboard';
 import Sidebar from '@/components/Sidebar';
 import { WalletProvider } from '@/context/WalletContext';
+import { ThemeProvider } from "@/components/theme-provider"
+import { fontSans } from "@/components/lib/fonts"
+import { cn } from "@/components/lib/utils"
+
+// import { siteConfig } from "@/config/site"
+
+// import {
+//   Sheet,
+//   SheetContent,
+//   SheetDescription,
+//   SheetHeader,
+//   SheetTitle,
+// } from "@/components/ui/sheet"
+// import { SiteHeader } from "@/components/site-header"
+// import { TailwindIndicator } from "@/components/tailwind-indicator"
+
 
 const inter = Inter({ subsets: ['latin'] });
 
