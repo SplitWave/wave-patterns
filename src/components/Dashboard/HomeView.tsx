@@ -4,6 +4,7 @@ import { classNames } from './Dashboard';
 import {
   KaminoPoints,
   fetchAllTokensBalance,
+  getFarmsUserState,
   getKaminoPoints,
   getMultipleTokenPrice,
   getStakeAccounts,
@@ -15,6 +16,7 @@ import { BeatLoader } from 'react-spinners';
 import AssetsTable from '../Tables/AssetsTable';
 import StakedAccountTable from '../Tables/StakedAccountTable';
 import KaminoPointsTable from '../Tables/KaminoPointsTable';
+import KaminoDataTable from '../Tables/KaminoDataTable';
 
 function HomeView() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -24,6 +26,7 @@ function HomeView() {
     Assets: [],
     StakedAccounts: [],
     KaminoPoints: [],
+    KaminoData: [],
   });
 
   const fetchAssets = async () => {
@@ -120,24 +123,29 @@ function HomeView() {
     }
   };
 
-  // async function fetchBorrowingUserMetadata() {
-  //   const publicKey = '7Bi8CQX7sV2wWSP4wCeE2rpHD8PdcQ3L99N8J2sKGSRT'; // Example publicKey
-  //   try {
-  //     const metadata = await getFarmsUserState(publicKey);
-  //     console.log('farm User state:', metadata);
-  //   } catch (error) {
-  //     console.error('Error fetching farm user state:', error);
-  //   }
-  // }
+  async function fetchFarmUserState() {
+    const publicKey = '7Bi8CQX7sV2wWSP4wCeE2rpHD8PdcQ3L99N8J2sKGSRT'; // Example publicKey
+    try {
+      const farm_user_state = await getFarmsUserState(publicKey);
+      // Update the state with Kamino  data
+      setDatas((prevDatas: any) => ({
+        ...prevDatas,
+        KaminoData: farm_user_state,
+      }));
+      //console.log('farm User state:', farm_user_state);
+    } catch (error) {
+      console.error('Error fetching farm user state:', error);
+    }
+  }
 
   useEffect(() => {
-    //fetchBorrowingUserMetadata();
     fetchAssets();
     fetchStakeAccounts();
     fetchKaminoPoints();
+    fetchFarmUserState();
   }, [walletAddress]);
 
-  console.log('Kamino Points :', datas.KaminoPoints);
+  //console.log('Kamino Data :', datas.KaminoData);
 
   return (
     <div className=" w-full  lg:p-10  ">
@@ -333,7 +341,7 @@ function HomeView() {
                                 : 'text-blue-100  hover:text-white'
                             )
                           }>
-                          ____
+                          Kamino Data
                         </Tab>
                       </Tab.List>
                       <Tab.Panels className="mt-4 ">
@@ -360,10 +368,10 @@ function HomeView() {
                             </div>
                           ) : (
                             <div>
-                              {datas.KaminoPoints.length > 0 ? (
-                                <></>
+                              {datas.KaminoData.length > 0 ? (
+                                <KaminoDataTable datas={datas} />
                               ) : (
-                                <p>No points found</p>
+                                <p>No data found</p>
                               )}
                             </div>
                           )}
