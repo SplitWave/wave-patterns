@@ -20,7 +20,9 @@ function KaminoPointsTable({ datas }: { datas: any }) {
           <div className="p-2 flex flex-row ">
             pointsEarnedBorrowLend{' '}
             <span className=" text-blue-300 ml-6 ">
-              {datas.KaminoPoints.pointsEarnedBorrowLend}
+              {datas.KaminoPoints.pointsEarnedBorrowLend
+                .toString()
+                .slice(0, 10)}
             </span>{' '}
           </div>
           <div className="p-2 flex flex-row ">

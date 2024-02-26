@@ -343,41 +343,39 @@ export const getFarmsUserState = async (publicKey: string) => {
   }
 };
 
-// export const getLendingObligation = async (publicKey: string) => {
-//   try {
-//     const apiKey = process.env.NEXT_PUBLIC_API_KEY;
-//     if (!apiKey) {
-//       throw new Error('API key not found in environment variables.');
-//     }
+export const getLendingObligation = async (publicKey: string) => {
+  try {
+    const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+    if (!apiKey) {
+      throw new Error('API key not found in environment variables.');
+    }
 
-//     const endpoint = `https://programs.shyft.to/v0/graphql/?api_key=${apiKey}`;
-//     const query = `
-//       query MyQuery {
-//         kamino_lending_Obligation(
-//           where: { owner: { _eq: ${publicKey} } }
-//         ) {
-//           _lamports
-//           allowedBorrowValueSf
-//           borrowFactorAdjustedDebtValueSf
-//           borrowedAssetsMarketValueSf
-//           depositedValueSf
-//           elevationGroup
-//           lastUpdate
-//           lendingMarket
-//           lowestReserveDepositLtv
-//           numOfObsoleteReserves
-//           owner
-//           referrer
-//           tag
-//           unhealthyBorrowValueSf
-//         }
-//       }
-//     `;
+    const endpoint = `https://programs.shyft.to/v0/graphql/?api_key=${apiKey}`;
+    const query = `
+    query MyQuery {
+      kamino_lending_Obligation(
+        where: {owner: {_eq: "${publicKey}"}}
+      ) {
+        _lamports
+        lastUpdate
+        lendingMarket
+        owner
+        referrer
+        tag
+        unhealthyBorrowValueSf
+        borrows
+        deposits
+        borrowsAssetTiers
+        depositsAssetTiers
+        pubkey
+      }
+    }
+    `;
 
-//     const data: any = await request(endpoint, query);
-//     return data.kamino_lending_Obligation;
-//   } catch (error) {
-//     console.error('Error fetching lending obligation:', error);
-//     throw error;
-//   }
-// };
+    const data: any = await request(endpoint, query);
+    return data.kamino_lending_Obligation;
+  } catch (error) {
+    console.error('Error fetching lending obligation:', error);
+    throw error;
+  }
+};

@@ -6,6 +6,7 @@ import {
   fetchAllTokensBalance,
   getFarmsUserState,
   getKaminoPoints,
+  getLendingObligation,
   getMultipleTokenPrice,
   getStakeAccounts,
 } from '@/utils/helpers';
@@ -17,6 +18,7 @@ import AssetsTable from '../Tables/AssetsTable';
 import StakedAccountTable from '../Tables/StakedAccountTable';
 import KaminoPointsTable from '../Tables/KaminoPointsTable';
 import KaminoDataTable from '../Tables/KaminoDataTable';
+import KaminoLendingObligationTable from '../Tables/KaminoLendingObligationTable';
 
 function HomeView() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -27,6 +29,7 @@ function HomeView() {
     StakedAccounts: [],
     KaminoPoints: [],
     KaminoData: [],
+    KaminoLendingObligation: [],
   });
 
   const fetchAssets = async () => {
@@ -87,7 +90,8 @@ function HomeView() {
     setIsLoading(true);
     try {
       const response: any = await getStakeAccounts(
-        'CCoSKkgPWC1CSBki4LM9cCp9hM9zURQyfgY6h3UtNitR',
+        // 'CCoSKkgPWC1CSBki4LM9cCp9hM9zURQyfgY6h3UtNitR',
+        walletAddress,
         4,
         5
       );
@@ -124,9 +128,8 @@ function HomeView() {
   };
 
   async function fetchFarmUserState() {
-    const publicKey = '7Bi8CQX7sV2wWSP4wCeE2rpHD8PdcQ3L99N8J2sKGSRT'; // Example publicKey
     try {
-      const farm_user_state = await getFarmsUserState(publicKey);
+      const farm_user_state = await getFarmsUserState(walletAddress);
       // Update the state with Kamino  data
       setDatas((prevDatas: any) => ({
         ...prevDatas,
@@ -138,14 +141,29 @@ function HomeView() {
     }
   }
 
+  async function fetchLendingObligation() {
+    try {
+      const lendingObligation = await getLendingObligation(walletAddress);
+      // Update the state with lending obligation  data
+      setDatas((prevDatas: any) => ({
+        ...prevDatas,
+        KaminoLendingObligation: lendingObligation,
+      }));
+      //console.log('lending obligation:', lendingObligation);
+    } catch (error) {
+      console.error('Error fetching farm user state:', error);
+    }
+  }
+
   useEffect(() => {
     fetchAssets();
     fetchStakeAccounts();
     fetchKaminoPoints();
     fetchFarmUserState();
+    fetchLendingObligation();
   }, [walletAddress]);
 
-  //console.log('Kamino Data :', datas.KaminoData);
+  console.log('Lending Obligation :', datas.KaminoLendingObligation);
 
   return (
     <div className=" w-full  lg:p-10  ">
@@ -297,7 +315,7 @@ function HomeView() {
                   </div>
                   {/**Assets Box */}
                   {/** */}
-                  <div className="focus:outline-none mt-4 p-4 border border-neutral-800 rounded-lg   ">
+                  <div className="focus:outline-none mt-4 p-4 border border-neutral-800 rounded-lg  bg-white ">
                     {isLoading ? (
                       <div className="w-full h-full flex justify-center items-center ">
                         <BeatLoader color="white" />
@@ -329,7 +347,20 @@ function HomeView() {
                                 : 'text-blue-100  hover:text-white'
                             )
                           }>
-                          Kamino Points
+                          Kamino Lend | Borrow
+                        </Tab>
+
+                        <Tab
+                          className={({ selected }) =>
+                            classNames(
+                              'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-100',
+                              'focus:outline-none',
+                              selected
+                                ? 'bg-black  shadow'
+                                : 'text-blue-100  hover:text-white'
+                            )
+                          }>
+                          Kamino Farm State
                         </Tab>
                         <Tab
                           className={({ selected }) =>
@@ -341,7 +372,7 @@ function HomeView() {
                                 : 'text-blue-100  hover:text-white'
                             )
                           }>
-                          Kamino Data
+                          Kamino Points
                         </Tab>
                       </Tab.List>
                       <Tab.Panels className="mt-4 ">
@@ -351,12 +382,11 @@ function HomeView() {
                               <BeatLoader color="white" />
                             </div>
                           ) : (
-                            <div className=" ">
-                              {datas.KaminoPoints &&
-                              Object.keys(datas.KaminoPoints).length > 0 ? (
-                                <KaminoPointsTable datas={datas} />
+                            <div>
+                              {datas.KaminoLendingObligation.length > 0 ? (
+                                <KaminoLendingObligationTable datas={datas} />
                               ) : (
-                                <p>No points found</p>
+                                <p>No data found</p>
                               )}
                             </div>
                           )}
@@ -376,12 +406,28 @@ function HomeView() {
                             </div>
                           )}
                         </Tab.Panel>
+                        <Tab.Panel>
+                          {isLoading ? (
+                            <div className="w-full h-full flex justify-center items-center ">
+                              <BeatLoader color="white" />
+                            </div>
+                          ) : (
+                            <div className=" ">
+                              {datas.KaminoPoints &&
+                              Object.keys(datas.KaminoPoints).length > 0 ? (
+                                <KaminoPointsTable datas={datas} />
+                              ) : (
+                                <p>No points found</p>
+                              )}
+                            </div>
+                          )}
+                        </Tab.Panel>
                       </Tab.Panels>
                     </Tab.Group>
                   </div>
                   {/**Kamino **/}
                   {/** */}
-                  <div className="focus:outline-none mt-4 p-4 border border-neutral-800 rounded-lg   ">
+                  <div className="focus:outline-none mt-4 p-4 border border-neutral-800 rounded-lg  bg-white ">
                     {isLoading ? (
                       <div className="w-full h-full flex justify-center items-center ">
                         <BeatLoader color="white" />
