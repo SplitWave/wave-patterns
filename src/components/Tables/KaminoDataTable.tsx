@@ -12,18 +12,20 @@ function KaminoDataTable({ datas }: { datas: any }) {
           <div className="p-2">Num of Users</div>
         </div>
         <div className="border-t border-neutral-800 p-2">
-          {/* Iterate over StakedAccounts and render each stake account */}
-          {datas.KaminoData.map((data: any, index: any) => (
+          {/* Iterate over KaminoData and render each data */}
+          {datas.KaminoData.filter(
+            (data: any) => !data.FarmState.token.mint.includes('11111111111111')
+          ).map((data: any, index: any) => (
             <div
               key={index}
-              className="grid grid-cols-6 text-sm  ">
-              <div className="p-2 text-blue-300 col-span-2 ">
+              className="grid grid-cols-6 text-sm">
+              <div className="p-2 text-blue-300 col-span-2">
                 <a
                   href={`https://solscan.io/account/${data.FarmState.token.mint}`}>
                   {`${data.FarmState.token.mint.toString().slice(0, 12)}...`}
                 </a>
               </div>
-              <div className="p-2 col-span-2 ">
+              <div className="p-2 col-span-2">
                 {data.FarmState.totalStakedAmount.toString().slice(0, 12)}
               </div>
               <div className="p-2">{data.FarmState.numRewardTokens}</div>

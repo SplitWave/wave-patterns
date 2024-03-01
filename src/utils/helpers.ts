@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { request } from 'graphql-request';
+import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
 
 interface TokenInfo {
   name: string;
@@ -208,7 +209,7 @@ export const getHistoricalTokenPrice = async (
   time_to: number //unixtime
 ): Promise<HistoricalTokenPrice[]> => {
   try {
-    const apiKey = process.env.NEXT_BIRDEYE_API_KEY;
+    const apiKey = process.env.NEXT_PUBLIC_BIRDEYE_API_KEY;
     if (!apiKey) {
       throw new Error('API key not found in environment variables.');
     }
@@ -230,6 +231,36 @@ export const getHistoricalTokenPrice = async (
     throw error;
   }
 };
+
+const URL = clusterApiUrl('mainnet-beta');
+
+export async function getDateTokenWasRecievedInWallet(tokenAddress: string) {
+  try {
+    const connection = new Connection(
+      'https://docs-demo.solana-mainnet.quiknode.pro/'
+    );
+    //const connection = new Connection(URL);
+    const publicKey = new PublicKey(tokenAddress);
+    let txList = await connection.getSignaturesForAddress(publicKey, {
+      limit: 1000,
+    });
+
+    const txs = txList.map((tx) => tx.signature);
+    const parsedTxs = await connection.getParsedTransactions(txs, {
+      maxSupportedTransactionVersion: 0,
+    });
+    console.log('parsed transaction info', parsedTxs);
+    let length = txList.length - 1;
+    let blocktime = txList[length].blockTime;
+
+    if (blocktime) {
+      const date = new Date(blocktime * 1000);
+      return date;
+    }
+  } catch (error) {
+    console.error('Error fetching signatures:', error);
+  }
+}
 
 export const getPortfolio = async (
   walletAddress: string
