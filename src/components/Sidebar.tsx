@@ -17,20 +17,28 @@ export function classNames(
 }
 
 function Sidebar() {
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { isDarkMode } = useTheme();
   return (
     <div
-      className={`flex focus:outline-none w-full ${
-        isDarkMode ? '' : 'bg-white'
+      className={`flex focus:outline-none w-full h-full ${
+        isDarkMode
+          ? 'bg-white/[0.12]  border-neutral-800  '
+          : 'bg-white text-gray-500 font-semibold'
       }  `}>
       <Tab.Group vertical>
-        <Tab.List className="flex flex-col lg:items-center w-full h-full p-4 border-r border-neutral-800 ">
+        <Tab.List
+          className={`flex flex-col lg:items-center w-full h-full p-4 border-r ${
+            isDarkMode && 'border-neutral-800'
+          } `}>
           <Link href="/">
             <Tab
               className={({ selected }) =>
                 classNames(
                   ' focus:outline-none my-4 p-2 flex flex-row ',
-                  selected && ' bg-gray-600  rounded-md '
+                  selected && isDarkMode && ' bg-white/[0.12]  rounded-md ',
+                  selected &&
+                    !isDarkMode &&
+                    ' rounded-md bg-gray-200 text-black font-medium'
                 )
               }>
               <TiHomeOutline size={25} />
@@ -42,7 +50,10 @@ function Sidebar() {
               className={({ selected }) =>
                 classNames(
                   ' focus:outline-none my-4 p-2 flex flex-row ',
-                  selected && ' bg-gray-600  rounded-md '
+                  selected && isDarkMode && ' bg-white/[0.12]  rounded-md ',
+                  selected &&
+                    !isDarkMode &&
+                    ' rounded-md bg-gray-200 text-black font-medium'
                 )
               }>
               <BsPeople size={25} />
@@ -53,7 +64,10 @@ function Sidebar() {
             className={({ selected }) =>
               classNames(
                 ' focus:outline-none my-4 p-2 flex flex-row ',
-                selected && ' bg-gray-600  rounded-md '
+                selected && isDarkMode && ' bg-white/[0.12] rounded-md ',
+                selected &&
+                  !isDarkMode &&
+                  ' rounded-md bg-gray-200 text-black font-medium'
               )
             }>
             <TbSearch size={25} />
@@ -63,7 +77,10 @@ function Sidebar() {
             className={({ selected }) =>
               classNames(
                 ' focus:outline-none my-4 p-2 flex flex-row ',
-                selected && ' bg-gray-600  rounded-md '
+                selected && isDarkMode && ' bg-white/[0.12] rounded-md ',
+                selected &&
+                  !isDarkMode &&
+                  ' rounded-md bg-gray-200 text-black font-medium '
               )
             }>
             <MdOutlineFeedback size={25} />

@@ -27,7 +27,7 @@ function Header() {
     <div
       className={` w-full h-full lg:flex items-center lg:flex-row lg:justify-between border-b p-4  ${
         isDarkMode
-          ? 'bg-gray-200  bg-gradient-to-b from-zinc-200  border-neutral-800  dark:from-inherit   dark:bg-zinc-800/30'
+          ? 'bg-white/[0.12] border-neutral-800 '
           : 'bg-white text-black '
       } `}>
       <div className=" sm:w-full lg:w-1/3 flex flex-row lg:justify-center items-center ">

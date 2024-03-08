@@ -23,8 +23,10 @@ import KaminoPointsTable from '../Tables/KaminoPointsTable';
 import KaminoDataTable from '../Tables/KaminoDataTable';
 import KaminoLendingObligationTable from '../Tables/KaminoLendingObligationTable';
 import axios from 'axios';
+import { useTheme } from '@/context/ThemeContext';
 
 function HomeView() {
+  const { isDarkMode } = useTheme();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showPubKey, setShowPubKey] = useState<boolean>(false);
   const { walletAddress } = useWallet();
@@ -284,7 +286,7 @@ function HomeView() {
 
   return (
     <div className=" w-full  lg:p-10  ">
-      <div className=" w-full h-5 mb-10 ">
+      <div className={` w-full h-5 mb-2 ${isDarkMode ? '' : 'text-black'} `}>
         <Menu>
           <Menu.Button
             className=" ml-5 flex flex-row items-center "
@@ -302,7 +304,10 @@ function HomeView() {
                 }}
               />
             )}
-            <h1 className=" text-gray-200 text-sm font-medium ml-2 ">
+            <h1
+              className={` text-sm font-medium ml-2 ${
+                isDarkMode ? 'text-gray-200' : ''
+              } `}>
               {showPubKey ? walletAddress.slice(0, 5) : '*********'}
             </h1>
           </Menu.Button>
@@ -325,19 +330,32 @@ function HomeView() {
             {data === 'Assets' && (
               <div className=" grid grid-cols-2  gap-7  ">
                 {/**Assets Box */}
-                <div className="focus:outline-none mt-4 p-4 border border-neutral-800 rounded-lg   ">
+                <div
+                  className={`focus:outline-none mt-4 p-4 border rounded-lg ${
+                    isDarkMode
+                      ? 'border-neutral-800 bg-white/[0.12]'
+                      : 'bg-white text-black'
+                  } `}>
                   <Tab.Group
                     as="div"
                     className="w-full">
-                    <Tab.List className=" flex  p-1 w-full justify-between mb-2 bg-white/[0.12] rounded-md  ">
+                    <Tab.List
+                      className={` flex  p-1 w-full justify-between mb-2 rounded-md ${
+                        isDarkMode ? 'bg-white/[0.12]' : 'bg-gray-100'
+                      } `}>
                       <Tab
                         className={({ selected }) =>
                           classNames(
-                            'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-100',
+                            `w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-gray-500 ${
+                              isDarkMode && 'text-blue-100'
+                            } 
+                            } `,
                             'focus:outline-none',
-                            selected
-                              ? 'bg-black  shadow'
-                              : 'text-blue-100  hover:text-white'
+                            selected &&
+                              isDarkMode &&
+                              'bg-black  shadow text-white',
+
+                            selected && !isDarkMode && 'bg-white text-black/100'
                           )
                         }>
                         Assets
@@ -345,11 +363,14 @@ function HomeView() {
                       <Tab
                         className={({ selected }) =>
                           classNames(
-                            'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-100',
+                            `w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-gray-500 ${
+                              isDarkMode && 'text-blue-100'
+                            } `,
                             'focus:outline-none',
-                            selected
-                              ? 'bg-black  shadow'
-                              : 'text-blue-100  hover:text-white'
+                            selected &&
+                              isDarkMode &&
+                              'bg-black  shadow text-white',
+                            selected && !isDarkMode && 'bg-white text-black/100'
                           )
                         }>
                         Staked
@@ -420,7 +441,10 @@ function HomeView() {
           </div>
         ))}
         {/**Kamino */}
-        <div className="focus:outline-none mt-4 p-4 border border-neutral-800 rounded-lg  ">
+        <div
+          className={`focus:outline-none mt-4 p-4 border ${
+            isDarkMode ? 'border-neutral-800 bg-white/[0.12] ' : 'bg-white'
+          } rounded-lg  `}>
           <div className=" mb-5 ">
             {isLoading ? (
               <div className="w-full h-full flex justify-center items-center ">

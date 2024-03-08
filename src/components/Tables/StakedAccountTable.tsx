@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
+import { useTheme } from '@/context/ThemeContext';
 
 function StakedAccountTable({ datas }: { datas: any }) {
+  const { isDarkMode } = useTheme();
   const [solPrice, setSolPrice] = useState<number>(0);
   async function getCurrentSolanaPrice() {
     try {
@@ -77,7 +79,10 @@ function StakedAccountTable({ datas }: { datas: any }) {
 
   return (
     <div className="overflow-x-auto">
-      <div className="border border-neutral-800 rounded-lg  ">
+      <div
+        className={`border ${
+          isDarkMode ? 'border-neutral-800 ' : 'text-gray-600'
+        } rounded-lg  `}>
         <div className="grid grid-flow-col auto-cols-auto  text-md text-left p-2">
           {/* <div className="p-2 col-span-2 ">Stake Account</div> */}
           <div className="p-2 w-24">Assets</div>
@@ -86,7 +91,7 @@ function StakedAccountTable({ datas }: { datas: any }) {
           <div className="p-2 w-24">Active Stake (SOL)</div>
           <div className="p-2 w-24">Status</div>
         </div>
-        <div className="border-t border-neutral-800 p-2">
+        <div className={`border-t  ${isDarkMode && 'border-neutral-800'} p-2`}>
           {mappedStakes.map((stakeAccount: any, index: any) => (
             <div
               key={index}

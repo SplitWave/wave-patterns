@@ -27,7 +27,7 @@ export default function RootLayout({
             <div>
               <Header />
               <div className=" w-screen  flex flex-row">
-                <div className=" lg:w-1/6    ">
+                <div className=" lg:w-1/6  h-[125rem] ">
                   <Sidebar />
                 </div>
                 <div className=" lg:w-5/6  ">{children}</div>

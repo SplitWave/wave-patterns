@@ -1,9 +1,14 @@
+import { useTheme } from '@/context/ThemeContext';
 import Image from 'next/image';
 import React from 'react';
 
 function AssetsTable({ datas }: { datas: any }) {
+  const { isDarkMode } = useTheme();
   return (
-    <div className="border border-neutral-800 rounded-lg overflow-x-auto ">
+    <div
+      className={`border ${
+        isDarkMode ? 'border-neutral-800 ' : 'text-gray-700'
+      } rounded-lg overflow-x-auto `}>
       <div className="grid grid-flow-col auto-cols-auto  text-md text-center ">
         <div className="p-2 w-24">Asset</div>
         <div className="p-2 w-24">Token Name</div>
@@ -15,7 +20,7 @@ function AssetsTable({ datas }: { datas: any }) {
         <div className="p-2 w-24">Cost basis</div>
         <div className="p-2 w-24">Return</div> */}
       </div>
-      <div className="border-t border-neutral-800 ">
+      <div className={`border-t ${isDarkMode && 'border-neutral-800'} `}>
         {datas.Assets
           //.slice(0, 10)
           .filter((token: any) => token.balance !== 0)
