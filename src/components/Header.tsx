@@ -3,12 +3,16 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { FaXTwitter, FaGithub } from 'react-icons/fa6';
 import { FaSearch } from 'react-icons/fa';
+import { MdOutlineModeNight } from 'react-icons/md';
+import { PiSunLight } from 'react-icons/pi';
 import { useWallet } from '@/context/WalletContext';
+import { useTheme } from '@/context/ThemeContext';
 
 function Header() {
   const { setWalletAddress } = useWallet();
   const [searchValue, setSearchValue] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const { isDarkMode, toggleTheme } = useTheme();
 
   const handleSearch = () => {
     if (!searchValue) {
@@ -20,7 +24,12 @@ function Header() {
     setSearchValue('');
   };
   return (
-    <div className=" w-full h-full lg:flex  lg:flex-row lg:justify-between border-b p-4  bg-gray-200  bg-gradient-to-b from-zinc-200  border-neutral-800  dark:from-inherit   dark:bg-zinc-800/30 ">
+    <div
+      className={` w-full h-full lg:flex items-center lg:flex-row lg:justify-between border-b p-4  ${
+        isDarkMode
+          ? 'bg-gray-200  bg-gradient-to-b from-zinc-200  border-neutral-800  dark:from-inherit   dark:bg-zinc-800/30'
+          : 'bg-white text-black '
+      } `}>
       <div className=" sm:w-full lg:w-1/3 flex flex-row lg:justify-center items-center ">
         <Image
           src="/vercel.svg"
@@ -32,10 +41,28 @@ function Header() {
         />
         <h1 className=" ml-2 font-bold text-xl ">WavePatterns</h1>
       </div>
+      <div onClick={toggleTheme}>
+        {isDarkMode ? (
+          <PiSunLight
+            color="white"
+            size={24}
+          />
+        ) : (
+          <MdOutlineModeNight
+            className=" text-gray-300 "
+            size={24}
+          />
+        )}
+      </div>
       <div className=" w-full lg:w-2/3 flex flex-col lg:flex-row lg:justify-center lg:items-center mt-3  ">
-        <div className=" lg:w-2/4 text-white flex px-2 items-center border rounded-lg overflow-hidden bg-gray-200  bg-gradient-to-b from-zinc-200  border-neutral-800  dark:from-inherit   dark:bg-zinc-800/30 ">
+        <div
+          className={` lg:w-2/4 flex px-2 items-center border rounded-lg overflow-hidden ${
+            isDarkMode
+              ? 'bg-gray-200  bg-gradient-to-b from-zinc-200  border-neutral-800  dark:from-inherit dark:bg-zinc-800/30 text-white'
+              : 'bg-white text-gray-300 shadow-md '
+          } `}>
           <FaSearch
-            className="text-white w-4 h-4 "
+            className=" w-4 h-4 "
             onClick={handleSearch}
           />
           <input
@@ -43,7 +70,11 @@ function Header() {
             id="address"
             name="address"
             placeholder="Paste any wallet address or .sol address here."
-            className="py-2 px-4 flex-1 outline-none bg-gradient-to-b from-zinc-200  border-neutral-800  dark:from-inherit   dark:bg-zinc-800/5 "
+            className={`py-2 px-4 flex-1 outline-none ${
+              isDarkMode
+                ? 'bg-gradient-to-b from-zinc-200  border-neutral-800  dark:from-inherit   dark:bg-zinc-800/5'
+                : 'bg-white'
+            } `}
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
           />

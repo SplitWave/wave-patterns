@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import Dashboard from '@/components/Dashboard/Dashboard';
 import Sidebar from '@/components/Sidebar';
 import { WalletProvider } from '@/context/WalletContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,15 +23,17 @@ export default function RootLayout({
     <html lang="en">
       <WalletProvider>
         <body className={inter.className}>
-          <div>
-            <Header />
-            <div className=" w-screen  flex flex-row">
-              <div className=" lg:w-1/6    ">
-                <Sidebar />
+          <ThemeProvider>
+            <div>
+              <Header />
+              <div className=" w-screen  flex flex-row">
+                <div className=" lg:w-1/6    ">
+                  <Sidebar />
+                </div>
+                <div className=" lg:w-5/6  ">{children}</div>
               </div>
-              <div className=" lg:w-5/6  ">{children}</div>
             </div>
-          </div>
+          </ThemeProvider>
         </body>
       </WalletProvider>
     </html>

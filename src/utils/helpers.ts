@@ -146,6 +146,30 @@ export const fetchAllTokensBalance = async (
   }
 };
 
+export const getParsedTransactionHistory = async (walletAddress: string) => {
+  try {
+    const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+    if (!apiKey) {
+      throw new Error('API key not found in environment variables.');
+    }
+    const url = `https://api.shyft.to/sol/v1/wallet/parsed_transaction_history?network=mainnet-beta&account=${walletAddress}&tx_num=10`;
+    const headers = {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+    };
+
+    const response: AxiosResponse<AllTokensBalanceResponse[]> = await axios.get(
+      url,
+      { headers }
+    );
+    console.log('transaction history', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching tokens balance:', error);
+    throw error;
+  }
+};
+
 export const getTokenPrice = async (
   tokenAddress: string
 ): Promise<TokenPrice[]> => {

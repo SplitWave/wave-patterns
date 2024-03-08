@@ -10,6 +10,7 @@ import {
   getKaminoPoints,
   getLendingObligation,
   getMultipleTokenPrice,
+  getParsedTransactionHistory,
   getStakeAccounts,
 } from '@/utils/helpers';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
@@ -71,11 +72,13 @@ function HomeView() {
             ? tokenPriceInfo.value
             : null;
 
-          // Fetch transactions data for the token
+          //Fetch transactions data for the token
           // const transactionsData = await fetchTransaction(
           //   token.associated_account,
           //   walletAddress
           // );
+
+          // console.log('Transaction Data', transactionsData);
 
           // // Process transactions data
           // const tokenData: any[] = [];
@@ -213,38 +216,47 @@ function HomeView() {
         console.log('No transactions found.');
         return []; // Return empty array
       }
+
+      // Define patterns for matching transaction descriptions
+      const transferredPattern = /transferred (\d+(\.\d+)?) (\w+) to (\w+)/i;
+      const swappedPattern =
+        /swapped (\d+(\.\d+)?) (\w+) for (\d+(\.\d+)?) (\w+)/i;
+
+      // Filter transactions based on type and description pattern
       const filteredTransactions = response.data.filter((transaction: any) => {
-        // Access the type property of each transaction object
         const type = transaction.type;
+        const description = transaction.description;
 
         // Check if the type is either "SWAP" or "TRANSFER"
-        return type === 'SWAP' || type === 'TRANSFER';
+        return (
+          (type === 'SWAP' || type === 'TRANSFER') &&
+          (transferredPattern.test(description) ||
+            swappedPattern.test(description))
+        );
       });
 
       console.log('filtered descriptions', filteredTransactions);
 
       // Extract timestamp and amount transferred
       const transactionsData = filteredTransactions.map((transaction: any) => {
-        // Find the relevant tokenBalanceChanges object
-        const tokenBalanceChange = transaction.accountData.find(
-          (data: any) => data.tokenBalanceChanges.length > 0
-        );
+        const type = transaction.type;
+        const description = transaction.description;
 
-        //console.log('token balance', tokenBalanceChange);
-        // Extract tokenAmount and decimals
-        const { tokenAmount, decimals } =
-          tokenBalanceChange.tokenBalanceChanges[0].rawTokenAmount;
-
-        // Convert tokenAmount to a number and calculate the actual value
-        let tokenAmountNumber = parseFloat(tokenAmount.replace(/,/g, ''));
-        if (tokenAmountNumber < 0) {
-          tokenAmountNumber *= -1; // Convert negative numbers to positive
+        let amountTransferred: number | undefined;
+        if (transferredPattern.test(description)) {
+          // Extract amount transferred in a transfer
+          const [, amount, , asset, recipient] =
+            description.match(transferredPattern)!;
+          amountTransferred = parseFloat(amount);
+        } else if (swappedPattern.test(description)) {
+          // Extract amount transferred in a swap
+          const [, amount, , asset] = description.match(swappedPattern)!;
+          amountTransferred = parseFloat(amount);
         }
-        const actualValue = tokenAmountNumber / Math.pow(10, decimals);
 
         return {
           timestamp: transaction.timestamp,
-          amountTransferred: actualValue,
+          amountTransferred: amountTransferred,
         };
       });
       //console.log('transactionsData', transactionsData);
@@ -253,26 +265,6 @@ function HomeView() {
       console.error('Error fetching data:', error);
     }
   }
-
-  // const url = 'https://rest-api.hellomoon.io/v0/defi/staking/accounts';
-
-  // async function getAccounts() {
-  //   const { data } = await axios.post(
-  //     url,
-  //     {
-  //       stakeAuthority: 'so1b2w9fpMdqgzHR2UvW4iqkkc8nig6xTeBjU5HMbjG',
-  //     },
-  //     {
-  //       headers: {
-  //         Accept: 'application/json',
-  //         'Content-Type': 'application/json',
-  //         Authorization: 'Bearer 581e79dc-5d3e-4404-8506-bee66e08eaf0',
-  //       },
-  //     }
-  //   );
-
-  //   console.log('data is', data);
-  // }
 
   useEffect(() => {
     fetchAssets();
@@ -285,7 +277,7 @@ function HomeView() {
     //   //'E5aGXX2oX8mJ7sqRe3ncRHuJo1tzqYNmeKM4oQLk11w6',
     //   walletAddress
     // );
-    //getAccounts();
+    //getParsedTransactionHistory('4T2FJdnmfgykZgi4Noqb3DywGzjrwJsfRGCDzTNcJq2f');
   }, [walletAddress]);
 
   //console.log('data :', datas.KaminoPoints);

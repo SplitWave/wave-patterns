@@ -6,6 +6,7 @@ import { BsPeople } from 'react-icons/bs';
 import { TiHomeOutline } from 'react-icons/ti';
 import { MdOutlineFeedback } from 'react-icons/md';
 import Link from 'next/link';
+import { useTheme } from '@/context/ThemeContext';
 
 export function classNames(
   ...classes: Array<string | boolean | undefined | null>
@@ -16,8 +17,12 @@ export function classNames(
 }
 
 function Sidebar() {
+  const { isDarkMode, toggleTheme } = useTheme();
   return (
-    <div className="flex focus:outline-none w-full  ">
+    <div
+      className={`flex focus:outline-none w-full ${
+        isDarkMode ? '' : 'bg-white'
+      }  `}>
       <Tab.Group vertical>
         <Tab.List className="flex flex-col lg:items-center w-full h-full p-4 border-r border-neutral-800 ">
           <Link href="/">

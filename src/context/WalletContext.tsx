@@ -12,8 +12,8 @@ const WalletContext = createContext<WalletContextType | undefined>(undefined);
 export const WalletProvider = ({ children }: any) => {
   const [walletAddress, setWalletAddress] = useState(
     //'CstHMD3QYcv4r9RM2dzWwLcAVekgJW7z2gNqcBhhneac'
-    //'CCoSKkgPWC1CSBki4LM9cCp9hM9zURQyfgY6h3UtNitR'
-    '7Bi8CQX7sV2wWSP4wCeE2rpHD8PdcQ3L99N8J2sKGSRT'
+    'CCoSKkgPWC1CSBki4LM9cCp9hM9zURQyfgY6h3UtNitR'
+    //'7Bi8CQX7sV2wWSP4wCeE2rpHD8PdcQ3L99N8J2sKGSRT'
   );
 
   return (
