@@ -37,6 +37,33 @@ function HomeView() {
     KaminoData: [],
     KaminoLendingObligation: [],
   });
+  const [topFiveAssets, setTopFiveAssets] = useState<any[]>([]);
+
+  // Define a function to calculate the product of token.currentPrice * token.balance
+  const calculateTokenCurrentValue = (token: any) => {
+    const tokenCurrentPrice = token.currentPrice || 0;
+    return tokenCurrentPrice * token.balance;
+  };
+
+  // Update the state and compute the top five assets separately
+  const updateStateAndTopFiveAssets = (assetsWithPrices: any) => {
+    // Set the state with all assets
+    setDatas((prevDatas: any) => ({
+      ...prevDatas,
+      Assets: assetsWithPrices,
+    }));
+
+    // Sort assets based on calculated product in descending order
+    const sortedAssets = [...assetsWithPrices].sort((a, b) => {
+      return calculateTokenCurrentValue(b) - calculateTokenCurrentValue(a);
+    });
+
+    // Take the first five assets
+    const topFiveAssets = sortedAssets.slice(0, 5);
+
+    // Return the top five assets
+    return topFiveAssets;
+  };
 
   const fetchAssets = async () => {
     setIsLoading(true);
@@ -44,11 +71,6 @@ function HomeView() {
       const tokenBalanceResponse: any = await fetchAllTokensBalance(
         walletAddress
       );
-
-      // console.log(
-      //   'token balance response',
-      //   tokenBalanceResponse.result[0].associated_account
-      // );
 
       if (tokenBalanceResponse.success) {
         const tokenBalances = tokenBalanceResponse.result;
@@ -74,50 +96,23 @@ function HomeView() {
             ? tokenPriceInfo.value
             : null;
 
-          //Fetch transactions data for the token
-          // const transactionsData = await fetchTransaction(
-          //   token.associated_account,
-          //   walletAddress
-          // );
-
-          // console.log('Transaction Data', transactionsData);
-
-          // // Process transactions data
-          // const tokenData: any[] = [];
-
-          // for (const transaction of transactionsData) {
-          //   const { timestamp, amountTransferred } = transaction;
-
-          //   // Fetch historical prices for the timestamp
-          //   const historicalPrices: any = await getHistoricalTokenPrice(
-          //     token.address,
-          //     timestamp * 1000,
-          //     Math.floor(Date.now() / 1000)
-          //   );
-
-          //   // Store the necessary information
-          //   const tokenInfo = {
-          //     timestamp: timestamp,
-          //     amountTransferred: amountTransferred,
-          //     historicalPrices: historicalPrices.data, // Assuming this returns the price history
-          //   };
-
-          //   tokenData.push(tokenInfo);
-          // }
-
           const tokenWithPrices = {
             ...token,
             currentPrice: tokenCurrentPrice,
-            //tokenData: tokenData,
           };
 
           assetsWithPrices.push(tokenWithPrices);
         }
-
+        // Update state and get top five assets
+        const topFiveAssets = updateStateAndTopFiveAssets(assetsWithPrices);
         setDatas((prevDatas: any) => ({
           ...prevDatas,
           Assets: assetsWithPrices,
         }));
+
+        // Set the state with the top five assets
+        setTopFiveAssets(topFiveAssets);
+
         setIsLoading(false);
       } else {
         console.error(
@@ -282,7 +277,7 @@ function HomeView() {
     //getParsedTransactionHistory('4T2FJdnmfgykZgi4Noqb3DywGzjrwJsfRGCDzTNcJq2f');
   }, [walletAddress]);
 
-  //console.log('data :', datas.KaminoPoints);
+  //console.log('data :', topFiveAssets);
 
   return (
     <div className=" w-full  lg:p-10  ">
@@ -385,7 +380,10 @@ function HomeView() {
                         ) : (
                           <div className=" ">
                             {datas[data].length > 0 ? (
-                              <AssetsTable datas={datas} />
+                              <AssetsTable
+                                datas={datas}
+                                topFiveAssets={topFiveAssets}
+                              />
                             ) : (
                               <p>No {data} found</p>
                             )}
