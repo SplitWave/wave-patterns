@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Tab, Menu } from '@headlessui/react';
 import { classNames } from './Dashboard';
 import {
@@ -24,8 +24,10 @@ import KaminoDataTable from '../Tables/KaminoDataTable';
 import KaminoLendingObligationTable from '../Tables/KaminoLendingObligationTable';
 import axios from 'axios';
 import { useTheme } from '@/context/ThemeContext';
+import { useDataContext } from '@/context/DataContext';
 
 function HomeView() {
+  const { setData } = useDataContext();
   const { isDarkMode } = useTheme();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showPubKey, setShowPubKey] = useState<boolean>(false);
@@ -60,6 +62,8 @@ function HomeView() {
 
     // Take the first five assets
     const topFiveAssets = sortedAssets.slice(0, 5);
+
+    setData(sortedAssets);
 
     // Return the top five assets
     return topFiveAssets;
@@ -343,14 +347,14 @@ function HomeView() {
                           classNames(
                             `w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-gray-500 ${
                               isDarkMode && 'text-blue-100'
-                            } 
+                            } ${!isDarkMode && 'text-black'} 
                             } `,
                             'focus:outline-none',
                             selected &&
                               isDarkMode &&
                               'bg-black  shadow text-white',
 
-                            selected && !isDarkMode && 'bg-white text-black/100'
+                            selected && !isDarkMode && 'bg-white text-gray-800'
                           )
                         }>
                         Assets
@@ -360,12 +364,12 @@ function HomeView() {
                           classNames(
                             `w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-gray-500 ${
                               isDarkMode && 'text-blue-100'
-                            } `,
+                            } ${!isDarkMode && 'text-black'} `,
                             'focus:outline-none',
                             selected &&
                               isDarkMode &&
                               'bg-black  shadow text-white',
-                            selected && !isDarkMode && 'bg-white text-black/100'
+                            selected && !isDarkMode && 'bg-white text-gray-800'
                           )
                         }>
                         Staked

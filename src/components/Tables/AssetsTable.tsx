@@ -14,30 +14,24 @@ function AssetsTable({
   return (
     <>
       <div
-        className={`border ${
-          isDarkMode ? 'border-neutral-800 ' : 'text-gray-700'
+        className={` text-[0.875rem] ${
+          isDarkMode ? ' ' : 'text-gray-700'
         } rounded-lg overflow-x-auto `}>
-        <div className="grid grid-flow-col auto-cols-auto  text-md text-center ">
-          <div className="p-2 w-24">Asset</div>
-          <div className="p-2 w-24">Token Name</div>
-          <div className="p-2 w-24">Current Price</div>
-          <div className="p-2 w-24">Balance</div>
-          <div className="p-2 w-24">Current Value</div>
-          {/* <div className="p-2 w-24">Unrealized gain</div>
-        <div className="p-2 w-24">Avg Cost price</div>
-        <div className="p-2 w-24">Cost basis</div>
-        <div className="p-2 w-24">Return</div> */}
-        </div>
-        <div className={`border-t ${isDarkMode && 'border-neutral-800'} `}>
-          {topFiveAssets
-            //.slice(0, 10)
-            //.filter((token: any) => token.balance !== 0)
-            .map((token: any, index: number) => (
-              <div
-                key={index}
-                className="grid grid-flow-col auto-cols-auto  text-sm text-center ">
-                {/* Adjusted width for the image column */}
-                <div className="p-2  w-24 flex items-center justify-center">
+        <table className="min-w-full">
+          <thead>
+            <tr>
+              <th className="px-4 py-2 text-center w-40">Asset</th>
+              <th className="px-4 py-2 text-center w-40">Token Name</th>
+              <th className="px-4 py-2 text-center w-40">Current Price</th>
+              <th className="px-4 py-2 text-center w-40">Balance</th>
+              <th className="px-4 py-2 text-center w-40">Current Value</th>
+            </tr>
+          </thead>
+          <tbody
+            className={`border-t ${isDarkMode ? 'border-neutral-800  ' : ''} `}>
+            {topFiveAssets.map((token: any, index: number) => (
+              <tr key={index}>
+                <td className="px-4 py-2 w-40 flex items-center justify-center">
                   <Image
                     loader={({ src }) => src}
                     src={token.info.image}
@@ -46,22 +40,27 @@ function AssetsTable({
                     height={30}
                     className="rounded-md"
                   />
-                </div>
-                <div className="p-2 w-24 ">{token.info.name}</div>
-                <div className="p-2 w-24">
+                </td>
+                <td className="px-4 py-2 w-40 text-center">
+                  {token.info.name}
+                </td>
+                <td className="px-4 py-2 w-40 text-center">
                   {token.currentPrice
                     ? `$${token.currentPrice.toFixed(2)}`
                     : '-'}
-                </div>
-                <div className="p-2 w-24">{token.balance.toFixed(2)}</div>
-                <div className="p-2 w-24">
+                </td>
+                <td className="px-4 py-2 w-40 text-center">
+                  {token.balance.toFixed(2)}
+                </td>
+                <td className="px-4 py-2 w-40 text-center">
                   {token.currentPrice && token.balance
                     ? `$${(token.currentPrice * token.balance).toFixed(2)}`
                     : '-'}
-                </div>
-              </div>
+                </td>
+              </tr>
             ))}
-        </div>
+          </tbody>
+        </table>
       </div>
       <Link href={{ pathname: '/assets' }}>
         <p className=" text-center mt-4 ">Click here to see more</p>
