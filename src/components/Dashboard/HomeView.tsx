@@ -13,8 +13,7 @@ import {
   getParsedTransactionHistory,
   getStakeAccounts,
 } from '@/utils/helpers';
-import { FiEye, FiEyeOff } from 'react-icons/fi';
-import Image from 'next/image';
+
 import { useWallet } from '@/context/WalletContext';
 import { BeatLoader } from 'react-spinners';
 import AssetsTable from '../Tables/AssetsTable';
@@ -25,6 +24,7 @@ import KaminoLendingObligationTable from '../Tables/KaminoLendingObligationTable
 import axios from 'axios';
 import { useTheme } from '@/context/ThemeContext';
 import { useDataContext } from '@/context/DataContext';
+import PublicKeyBar from './PublicKeyBar';
 
 function HomeView() {
   const { setData } = useDataContext();
@@ -285,44 +285,11 @@ function HomeView() {
 
   return (
     <div className=" w-full  lg:p-10  ">
-      <div className={` w-full h-5 mb-2 ${isDarkMode ? '' : 'text-black'} `}>
-        <Menu>
-          <Menu.Button
-            className=" ml-5 flex flex-row items-center "
-            as="div">
-            {showPubKey ? (
-              <FiEye
-                onClick={() => {
-                  setShowPubKey(!showPubKey);
-                }}
-              />
-            ) : (
-              <FiEyeOff
-                onClick={() => {
-                  setShowPubKey(!showPubKey);
-                }}
-              />
-            )}
-            <h1
-              className={` text-sm font-medium ml-2 ${
-                isDarkMode ? 'text-gray-200' : ''
-              } `}>
-              {showPubKey ? walletAddress.slice(0, 5) : '*********'}
-            </h1>
-          </Menu.Button>
-          <Menu.Items className=" pl-4 rounded-md bg-white/[0.12] w-2/5 p-1 text-sm font-medium ">
-            <Menu.Item>
-              {({ active }) => (
-                <p>
-                  {showPubKey
-                    ? walletAddress
-                    : '*************************************************'}
-                </p>
-              )}
-            </Menu.Item>
-          </Menu.Items>
-        </Menu>
-      </div>
+      <PublicKeyBar
+        walletAddress={walletAddress}
+        showPubKey={showPubKey}
+        setShowPubKey={setShowPubKey}
+      />
       <div>
         {Object.keys(datas).map((data, idx) => (
           <div key={idx}>

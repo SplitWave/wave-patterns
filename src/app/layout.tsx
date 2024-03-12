@@ -6,6 +6,8 @@ import Sidebar from '@/components/Sidebar';
 import { WalletProvider } from '@/context/WalletContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { DataProvider } from '@/context/DataContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,6 +26,7 @@ export default function RootLayout({
       <WalletProvider>
         <body className={inter.className}>
           <ThemeProvider>
+            <ToastContainer />
             <DataProvider>
               <div>
                 <Header />

@@ -1,10 +1,14 @@
 'use client';
+import PublicKeyBar from '@/components/Dashboard/PublicKeyBar';
 import { useDataContext } from '@/context/DataContext';
 import { useTheme } from '@/context/ThemeContext';
+import { useWallet } from '@/context/WalletContext';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 
 function Page() {
+  const [showPubKey, setShowPubKey] = useState<boolean>(false);
+  const { walletAddress } = useWallet();
   const { data } = useDataContext();
   const { isDarkMode } = useTheme();
 
@@ -14,7 +18,12 @@ function Page() {
       className={`w-full h-full p-10 ${
         isDarkMode ? 'bg-black text-white' : 'bg-gray-100 text-black '
       }`}>
-      <h1 className=" text-[1.5rem] font-semibold ">Assets</h1>
+      <PublicKeyBar
+        walletAddress={walletAddress}
+        showPubKey={showPubKey}
+        setShowPubKey={setShowPubKey}
+      />
+      <h1 className=" text-[1.5rem] font-semibold mt-5 ">Assets</h1>
       <h1 className=" text-gray-300 ">
         Understand your unrealized profit and loss per token
       </h1>
