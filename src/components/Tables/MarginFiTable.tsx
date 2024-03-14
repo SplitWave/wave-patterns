@@ -46,8 +46,16 @@ function MarginFiTable({ datas }: { datas: any }) {
                   <div
                     key={index}
                     className=" mx-6 my-2 flex flex-row items-center justify-between ">
-                    <div>token: {borrow.tokenSymbol}</div>
-                    <div>Amount: ${Math.floor(borrow.usdValue)}</div>
+                    <div>
+                      token:{' '}
+                      <span className=" font-bold ">{borrow.tokenSymbol}</span>
+                    </div>
+                    <div>
+                      Amount:{' '}
+                      <span className=" font-bold ">
+                        ${Math.floor(borrow.usdValue)}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </Disclosure.Panel>
@@ -77,8 +85,16 @@ function MarginFiTable({ datas }: { datas: any }) {
                   <div
                     key={index}
                     className=" mx-6 my-2 flex flex-row items-center justify-between ">
-                    <div>token: {deposit.tokenSymbol}</div>
-                    <div>Amount: ${Math.floor(deposit.usdValue)}</div>
+                    <div>
+                      token:{' '}
+                      <span className=" font-bold ">{deposit.tokenSymbol}</span>
+                    </div>
+                    <div>
+                      Amount:{' '}
+                      <span className=" font-bold ">
+                        ${Math.floor(deposit.usdValue)}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </Disclosure.Panel>
