@@ -25,6 +25,8 @@ import axios from 'axios';
 import { useTheme } from '@/context/ThemeContext';
 import { useDataContext } from '@/context/DataContext';
 import PublicKeyBar from './PublicKeyBar';
+import { fetchMarginfiData } from '@/utils/marginfi';
+import MarginFiTable from '../Tables/MarginFiTable';
 
 function HomeView() {
   const { setData } = useDataContext();
@@ -38,6 +40,7 @@ function HomeView() {
     KaminoPoints: [],
     KaminoData: [],
     KaminoLendingObligation: [],
+    MarginFiData: [],
   });
   const [topFiveAssets, setTopFiveAssets] = useState<any[]>([]);
 
@@ -174,7 +177,10 @@ function HomeView() {
 
   async function fetchFarmUserState() {
     try {
-      const farm_user_state = await getFarmsUserState(walletAddress);
+      const farm_user_state = await getFarmsUserState(
+        //walletAddress
+        '7Bi8CQX7sV2wWSP4wCeE2rpHD8PdcQ3L99N8J2sKGSRT'
+      );
       // Update the state with Kamino  data
       setDatas((prevDatas: any) => ({
         ...prevDatas,
@@ -188,7 +194,10 @@ function HomeView() {
 
   async function fetchLendingObligation() {
     try {
-      const lendingObligation = await getLendingObligation(walletAddress);
+      const lendingObligation = await getLendingObligation(
+        //walletAddress
+        'CstHMD3QYcv4r9RM2dzWwLcAVekgJW7z2gNqcBhhneac'
+      );
       // Update the state with lending obligation  data
       setDatas((prevDatas: any) => ({
         ...prevDatas,
@@ -267,21 +276,33 @@ function HomeView() {
     }
   }
 
+  async function fetchMarginFiData() {
+    try {
+      const { userAccountsShaped } = await fetchMarginfiData(
+        //walletAddress
+        '2ZJz3sKxpUNrTcAdSbeR1HqXCutdCvT9Jd2hpVMK5jMU'
+      );
+
+      //console.log('useAccountsShaped', userAccountsShaped);
+      setDatas((prevDatas: any) => ({
+        ...prevDatas,
+        MarginFiData: userAccountsShaped,
+      }));
+    } catch (error) {
+      console.error('Error fetching marginfi data:', error);
+    }
+  }
+
   useEffect(() => {
     fetchAssets();
     fetchStakeAccounts();
     fetchKaminoPoints();
     fetchFarmUserState();
     fetchLendingObligation();
-    // fetchTransaction(
-    //   '4T2FJdnmfgykZgi4Noqb3DywGzjrwJsfRGCDzTNcJq2f',
-    //   //'E5aGXX2oX8mJ7sqRe3ncRHuJo1tzqYNmeKM4oQLk11w6',
-    //   walletAddress
-    // );
-    //getParsedTransactionHistory('4T2FJdnmfgykZgi4Noqb3DywGzjrwJsfRGCDzTNcJq2f');
+    fetchMarginFiData();
   }, [walletAddress]);
 
-  //console.log('data :', topFiveAssets);
+  //console.log('data :', datas.MarginFiData);
 
   return (
     <div className=" w-full  lg:p-10  ">
@@ -346,7 +367,9 @@ function HomeView() {
                       <Tab.Panel>
                         {isLoading ? (
                           <div className="w-full h-full flex justify-center items-center ">
-                            <BeatLoader color="white" />
+                            <BeatLoader
+                              color={isDarkMode ? 'white' : 'black'}
+                            />
                           </div>
                         ) : (
                           <div className=" ">
@@ -364,7 +387,9 @@ function HomeView() {
                       <Tab.Panel>
                         {isLoading ? (
                           <div className="w-full h-full flex justify-center items-center ">
-                            <BeatLoader color="white" />
+                            <BeatLoader
+                              color={isDarkMode ? 'white' : 'black'}
+                            />
                           </div>
                         ) : (
                           <div>
@@ -396,7 +421,9 @@ function HomeView() {
                 {/* <div className="focus:outline-none mt-4 p-4 border border-neutral-800 rounded-lg  bg-white ">
                   {isLoading ? (
                     <div className="w-full h-full flex justify-center items-center ">
-                      <BeatLoader color="white" />
+                    <BeatLoader
+                              color={isDarkMode ? 'white' : 'black'}
+                            />
                     </div>
                   ) : (
                     <div>
@@ -409,6 +436,32 @@ function HomeView() {
             )}
           </div>
         ))}
+        {/**marginFi */}
+        <div
+          className={`focus:outline-none mt-4 p-4 border ${
+            isDarkMode
+              ? 'border-neutral-800 bg-white/[0.12] '
+              : 'bg-white text-black '
+          } rounded-lg  `}>
+          <h1 className=" ml-5  ">MarginFi</h1>
+          <div className=" mb-5 ">
+            {isLoading ? (
+              <div className="w-full h-full flex justify-center items-center ">
+                <BeatLoader color={isDarkMode ? 'white' : 'black'} />
+              </div>
+            ) : (
+              <div className="mt-2 ">
+                {datas.MarginFiData &&
+                Object.keys(datas.MarginFiData).length > 0 ? (
+                  <MarginFiTable datas={datas} />
+                ) : (
+                  <p>No MarginFi data found</p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+        {/**marginFi */}
         {/**Kamino */}
         <div
           className={`focus:outline-none mt-4 p-4 border ${
@@ -417,7 +470,7 @@ function HomeView() {
           <div className=" mb-5 ">
             {isLoading ? (
               <div className="w-full h-full flex justify-center items-center ">
-                <BeatLoader color="white" />
+                <BeatLoader color={isDarkMode ? 'white' : 'black'} />
               </div>
             ) : (
               <div className=" ">
@@ -425,7 +478,7 @@ function HomeView() {
                 Object.keys(datas.KaminoPoints).length > 0 ? (
                   <KaminoPointsTable datas={datas} />
                 ) : (
-                  <p></p>
+                  <p>No Kamino points found</p>
                 )}
               </div>
             )}
@@ -476,7 +529,7 @@ function HomeView() {
               <Tab.Panel>
                 {isLoading ? (
                   <div className="w-full h-full flex justify-center items-center ">
-                    <BeatLoader color="white" />
+                    <BeatLoader color={isDarkMode ? 'white' : 'black'} />
                   </div>
                 ) : (
                   <div>
@@ -491,7 +544,7 @@ function HomeView() {
               <Tab.Panel>
                 {isLoading ? (
                   <div className="w-full h-full flex justify-center items-center ">
-                    <BeatLoader color="white" />
+                    <BeatLoader color={isDarkMode ? 'white' : 'black'} />
                   </div>
                 ) : (
                   <div>
@@ -506,7 +559,9 @@ function HomeView() {
               {/* <Tab.Panel>
                 {isLoading ? (
                   <div className="w-full h-full flex justify-center items-center ">
-                    <BeatLoader color="white" />
+                  <BeatLoader
+                              color={isDarkMode ? 'white' : 'black'}
+                            />
                   </div>
                 ) : (
                   <div className=" ">
