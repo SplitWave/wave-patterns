@@ -27,6 +27,7 @@ import { useDataContext } from '@/context/DataContext';
 import PublicKeyBar from './PublicKeyBar';
 import { fetchMarginfiData } from '@/utils/marginfi';
 import MarginFiTable from '../Tables/MarginFiTable';
+import { getAllYourObligations } from '@/utils/kamino';
 
 function HomeView() {
   const { setData } = useDataContext();
@@ -38,8 +39,8 @@ function HomeView() {
     Assets: [],
     StakedAccounts: [],
     KaminoPoints: [],
-    KaminoData: [],
-    KaminoLendingObligation: [],
+    KaminoBorrows: [],
+    KaminoDeposits: [],
     MarginFiData: [],
   });
   const [topFiveAssets, setTopFiveAssets] = useState<any[]>([]);
@@ -175,38 +176,24 @@ function HomeView() {
     }
   };
 
-  async function fetchFarmUserState() {
-    try {
-      const farm_user_state = await getFarmsUserState(
-        //walletAddress
-        '7Bi8CQX7sV2wWSP4wCeE2rpHD8PdcQ3L99N8J2sKGSRT'
-      );
-      // Update the state with Kamino  data
-      setDatas((prevDatas: any) => ({
-        ...prevDatas,
-        KaminoData: farm_user_state,
-      }));
-      //console.log('farm User state:', farm_user_state);
-    } catch (error) {
-      console.error('Error fetching farm user state:', error);
-    }
-  }
+  async function fetchKaminoData() {
+    const result = await getAllYourObligations(
+      walletAddress
+      //'HNqJtqudHDWiWHWg3RH7FPamf8dyXjFwJVPmfRDMDyjE'
+    );
 
-  async function fetchLendingObligation() {
-    try {
-      const lendingObligation = await getLendingObligation(
-        //walletAddress
-        'CstHMD3QYcv4r9RM2dzWwLcAVekgJW7z2gNqcBhhneac'
-      );
-      // Update the state with lending obligation  data
-      setDatas((prevDatas: any) => ({
-        ...prevDatas,
-        KaminoLendingObligation: lendingObligation,
-      }));
-      //console.log('lending obligation:', lendingObligation);
-    } catch (error) {
-      console.error('Error fetching farm user state:', error);
+    if (!result) {
+      console.error('Error: No data returned.');
+      return;
     }
+
+    const { depositedAssets, borrowedAssets } = result;
+    // Update the state with Kamino points data
+    setDatas((prevDatas: any) => ({
+      ...prevDatas,
+      KaminoBorrows: borrowedAssets,
+      KaminoDeposits: depositedAssets,
+    }));
   }
 
   async function fetchTransaction(tokenAddress: string, walletAddress: string) {
@@ -297,12 +284,13 @@ function HomeView() {
     fetchAssets();
     fetchStakeAccounts();
     fetchKaminoPoints();
-    fetchFarmUserState();
-    fetchLendingObligation();
+    fetchKaminoData();
     fetchMarginFiData();
   }, [walletAddress]);
 
-  //console.log('data :', datas.MarginFiData);
+  // console.log('data :', datas.KaminoBorrows);
+  // console.log('data :', datas.KaminoDeposits);
+  // 0: Object { amount: 8.79452111, tokenAddress: "So11111111111111111111111111111111111111112" }
 
   return (
     <div className=" w-full  lg:p-10  ">
@@ -486,31 +474,40 @@ function HomeView() {
           <Tab.Group
             as="div"
             className="w-full">
-            <Tab.List className=" flex  p-1 w-full justify-between mb-2 bg-white/[0.12] rounded-md  ">
+            <Tab.List
+              className={` flex  p-1 w-full justify-between mb-2 rounded-md ${
+                isDarkMode ? 'bg-white/[0.12]' : 'bg-gray-100'
+              } `}>
               <Tab
                 className={({ selected }) =>
                   classNames(
-                    'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-100',
+                    `w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-gray-500 ${
+                      isDarkMode && 'text-blue-100'
+                    } ${!isDarkMode && 'text-black'} 
+                  } `,
                     'focus:outline-none',
-                    selected
-                      ? 'bg-black  shadow'
-                      : 'text-blue-100  hover:text-white'
+                    selected && isDarkMode && 'bg-black  shadow text-white',
+
+                    selected && !isDarkMode && 'bg-white text-gray-800'
                   )
                 }>
-                Kamino Lend | Borrow
+                Kamino Deposits
               </Tab>
 
               <Tab
                 className={({ selected }) =>
                   classNames(
-                    'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-100',
+                    `w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-gray-500 ${
+                      isDarkMode && 'text-blue-100'
+                    } ${!isDarkMode && 'text-black'} 
+                  } `,
                     'focus:outline-none',
-                    selected
-                      ? 'bg-black  shadow'
-                      : 'text-blue-100  hover:text-white'
+                    selected && isDarkMode && 'bg-black  shadow text-white',
+
+                    selected && !isDarkMode && 'bg-white text-gray-800'
                   )
                 }>
-                Kamino Liquidity
+                Kamino Borrows
               </Tab>
               {/* <Tab
                 className={({ selected }) =>
@@ -525,7 +522,10 @@ function HomeView() {
                 Points
               </Tab> */}
             </Tab.List>
-            <Tab.Panels className="mt-4 ">
+            <Tab.Panels
+              className={`mt-4 ${
+                isDarkMode ? 'text-white' : 'text-gray-800'
+              } `}>
               <Tab.Panel>
                 {isLoading ? (
                   <div className="w-full h-full flex justify-center items-center ">
@@ -533,10 +533,10 @@ function HomeView() {
                   </div>
                 ) : (
                   <div>
-                    {datas.KaminoLendingObligation.length > 0 ? (
-                      <KaminoLendingObligationTable datas={datas} />
+                    {datas.KaminoDeposits.length > 0 ? (
+                      <KaminoDataTable datas={datas.KaminoDeposits} />
                     ) : (
-                      <p>No data found</p>
+                      <p className=" text-center ">No data found</p>
                     )}
                   </div>
                 )}
@@ -548,10 +548,10 @@ function HomeView() {
                   </div>
                 ) : (
                   <div>
-                    {datas.KaminoData.length > 0 ? (
-                      <KaminoDataTable datas={datas} />
+                    {datas.KaminoBorrows.length > 0 ? (
+                      <KaminoDataTable datas={datas.KaminoBorrows} />
                     ) : (
-                      <p>No data found</p>
+                      <p className=" text-center ">No data found</p>
                     )}
                   </div>
                 )}

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hubbleprotocol/kamino-lending-sdk": "^2.9.5",
     "@headlessui/react": "^1.7.17",
     "@mrgnlabs/marginfi-client-v2": "2.0.3",
     "@mrgnlabs/mrgn-common": "1.1.0",

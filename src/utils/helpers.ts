@@ -411,18 +411,17 @@ export const getLendingObligation = async (publicKey: string) => {
       kamino_lending_Obligation(
         where: {owner: {_eq: "${publicKey}"}}
       ) {
-        _lamports
-        lastUpdate
         lendingMarket
         owner
-        referrer
-        tag
-        unhealthyBorrowValueSf
         borrows
+        borrowedAssetsMarketValueSf
+        borrowFactorAdjustedDebtValueSf
+        allowedBorrowValueSf
         deposits
-        borrowsAssetTiers
-        depositsAssetTiers
+        lowestReserveDepositLtv
+        depositedValueSf
         pubkey
+
       }
     }
     `;
