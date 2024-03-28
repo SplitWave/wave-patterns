@@ -2,7 +2,7 @@ import { useTheme } from '@/context/ThemeContext';
 import React from 'react';
 
 function KaminoDataTable({ datas }: { datas: any }) {
-  //console.log('kamino data', datas.KaminoData);
+  console.log('kamino data', datas.KaminoData);
   const { isDarkMode } = useTheme();
   return (
     <div

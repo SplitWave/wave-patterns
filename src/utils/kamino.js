@@ -404,7 +404,7 @@ export async function getAllYourObligations(walletAddress) {
           depositDetails.depositReserve
         );
 
-        // console.log("Deposited Amount: ", depositDetails.depositedAmount);
+        //console.log("Deposited Details: ", depositDetails);
         // console.log("Deposited Asset: ", depositedAsset.address);
 
         if (depositedAsset.success)
@@ -424,7 +424,7 @@ export async function getAllYourObligations(walletAddress) {
           borrowDetails.borrowedAmountSf
         );
 
-        // console.log("Borrowed Amount: ", borrowedAmount);
+        //console.log("Borrowed Assets: ", borrowedAsset);
         // console.log("Borrowed Asset: ", currencyDetails.address);
         if (borrowedAsset.success)
           borrowedAssets.push({

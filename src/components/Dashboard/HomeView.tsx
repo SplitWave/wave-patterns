@@ -266,8 +266,8 @@ function HomeView() {
   async function fetchMarginFiData() {
     try {
       const { userAccountsShaped } = await fetchMarginfiData(
-        //walletAddress
-        '2ZJz3sKxpUNrTcAdSbeR1HqXCutdCvT9Jd2hpVMK5jMU'
+        walletAddress
+        //'2ZJz3sKxpUNrTcAdSbeR1HqXCutdCvT9Jd2hpVMK5jMU'
       );
 
       //console.log('useAccountsShaped', userAccountsShaped);
